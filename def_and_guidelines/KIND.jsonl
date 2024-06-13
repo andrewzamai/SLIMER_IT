@@ -1,0 +1,17 @@
+[
+  {
+    "ne_tag": "PER",
+    "real_name": "persona",
+    "gpt_DeG": "{\"Definition\": \"'PERSONA' denota nomi propri di individui umani. Questo tipo di entità comprende nomi di persone reali, famose o meno, personaggi storici, e può includere anche personaggi di finzione.\", \"Guidelines\": \"Fai attenzione a non includere titoli o ruoli professionali senza nomi propri (es. 'il presidente' non è una 'PERSONA', ma 'il presidente Barack Obama' sì).\"}"
+  },
+  {
+    "ne_tag": "LOC",
+    "real_name": "località",
+    "gpt_DeG": "{\"Definition\": \"'LOCALITÀ' denota nomi propri di luoghi geografici, comprendendo città, paesi, stati, regioni, continenti, punti di interesse naturale, e indirizzi specifici.\", \"Guidelines\": \"Assicurati di non confondere i nomi di luoghi con nomi di persone, organizzazioni o altre entità. Ad esempio, 'Washington', potrebbe riferirsi alla città di Washington D.C. o al presidente George Washington, quindi considera attentamente il contesto. Escludi nomi di periodi storici, eventi o concetti astratti che non rappresentano luoghi fisici. Ad esempio, 'nel Rinascimento' è un periodo storico, non una località geografica.\"}"
+  },
+  {
+    "ne_tag": "ORG",
+    "real_name": "organizzazione",
+    "gpt_DeG": "{\"Definition\": \"'ORGANIZZAZIONE' denota nomi propri di aziende, istituzioni, gruppi o altre entità organizzative. Questo tipo di entità include sia entità private che pubbliche, come società, organizzazioni non profit, agenzie governative, università e altri gruppi strutturati.\", \"Guidelines\": \"Annota solo nomi propri, evita di annotare sostantivi comuni come 'azienda' o 'istituzione' a meno che non facciano parte del nome specifico dell'organizzazione. Assicurati di non annotare nomi di persone come organizzazioni, anche se contengono termini che potrebbero sembrare riferimenti a entità organizzative. Ad esempio, 'Johnson & Johnson' è un'azienda, mentre 'Johnson' da solo potrebbe essere il cognome di una persona.\"}"
+  }
+]
