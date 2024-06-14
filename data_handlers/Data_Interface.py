@@ -7,6 +7,7 @@ Inherit from this class and define the abstract methods:
 
 __package__ = "SLIMER_IT.src.data_handlers"
 
+import random
 from abc import ABC, abstractmethod
 from datasets import Dataset, DatasetDict
 from collections import OrderedDict
@@ -29,6 +30,7 @@ class Data_Interface(ABC):
         :param SLIMER_prompter_name: the name of a SLIMER prompt
         :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G
         """
+        self.path_to_BIO = path_to_BIO
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO)
         self.ne_categories = self.get_ne_categories()
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
@@ -220,6 +222,81 @@ class Data_Interface(ABC):
         return DatasetDict({split: Dataset.from_list(values) for split, values in n_samples_per_NE_dataset.items()})
 
 
+    """ Functions to extract N sentences per NE to show examples of NE in context """
+
+    @staticmethod
+    def __split_into_sentences(passage):
+        # split the passage into sentences based on punctuation .?! while not splitting "Dr." or "Fig.1"
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s(?! \d)(?!\d)', passage)
+        return [sentence for sentence in sentences if sentence.strip()]
+
+    @staticmethod
+    def __count_target_words(sentence, target_words):
+        # count occurrences of the target words in the sentence
+        matches = re.finditer(r'\b(?:' + '|'.join(map(re.escape, target_words)) + r')\b', sentence)
+        # get the list of target words found in this sentence
+        target_words_found = [match.group() for match in matches]
+        # count the number of target words found in this sentence
+        occurrences_count = len(target_words_found)
+        return occurrences_count, target_words_found
+
+    def __get_one_sentence_from_sample(self, sample):
+        """ given a sample and the gold answer spans for a NE return a sentence with (max number of) occurrences in it"""
+        document_context = sample['input']
+        target_words = json.loads(sample['output'])
+        ne_type = sample['tagName']
+        # split in sentences according to punctuation .?!
+        sentences = self.__split_into_sentences(document_context)
+        # count the occurrences of target words in each sentence
+        # to return the one with at least 1/highest number of occ.
+        target_word_counts = []
+        for sentence in sentences:
+            occurrences_count, target_words_found = self.__count_target_words(sentence, target_words)
+            target_word_counts.append({"sentence": sentence,
+                                       "target_words_in_it": target_words_found,
+                                       "occurrences_count": occurrences_count
+                                       })
+
+        # sort sentences by decreasing occurrences_count
+        target_word_counts = sorted(target_word_counts, key=lambda x: x['occurrences_count'], reverse=True)
+        # returning the sentence with highest number of occurrences, but with some contraints
+        sentence_to_ret = None
+        i = 0
+        while i < len(target_word_counts):
+            if target_word_counts[i]['occurrences_count'] != 0:
+                if 50 < len(target_word_counts[i]['sentence']) < 100:
+                    sentence_to_ret = target_word_counts[i]
+                    break
+            i += 1
+        return sentence_to_ret
+
+    def get_n_sentences_per_ne_type(self, n_sentences_per_ne=3):
+        # getting from training set n_sentences_per_ne as positive examples from which to let gpt infer NE definition
+        sentences_per_ne_type = {ne: [] for ne in self.ne_categories}
+        trainDataset = self.dataset_dict_SLIMER['train'].to_list()
+        random.seed(4)
+        random.shuffle(trainDataset)
+        for ne_type in self.ne_categories:
+            i = 0
+            while len(sentences_per_ne_type[ne_type]) < n_sentences_per_ne and i < len(trainDataset):
+                sample = trainDataset[i]
+                if sample['tagName'] == ne_type and json.loads(sample['output']) != []:
+                    sentence_target_words = self.__get_one_sentence_from_sample(sample)
+                    if sentence_target_words is not None:
+                        # removing duplicates in list of target words
+                        sentence_target_words['target_words_in_it'] = list(set(sentence_target_words['target_words_in_it']))
+                        sentences_per_ne_type[ne_type].append(sentence_target_words)
+                i += 1
+
+        not_enough_sentences = []
+        for ne_type, sentences in sentences_per_ne_type.items():
+            if len(sentences) < n_sentences_per_ne:
+                # raise ValueError(f"not enough sentences for {ne_type}")
+                not_enough_sentences.append((ne_type, len(sentences)))
+        print(f"NE types with less than n_sentences_per_ne: {len(not_enough_sentences)}")
+        print(not_enough_sentences)
+
+        return sentences_per_ne_type
 
 
 

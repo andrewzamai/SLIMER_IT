@@ -1,0 +1,360 @@
+{
+  "ANIM": [
+    {
+      "sentence": "Tra i mammiferi , \u00e8 presente il rinolofo euriale ( \" Rhinolophus euryale \" ) , un chirottero .",
+      "target_words_in_it": [
+        "Rhinolophus euryale"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Il fiume in queste zone ospita una grande popolazioni di ippopotami .",
+      "target_words_in_it": [
+        "ippopotami"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Tra le specie maggiormente predate i primati di piccola taglia come il Lori lento .",
+      "target_words_in_it": [
+        "Lori lento"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "BIO": [
+    {
+      "sentence": "Le macchie nere sulle foglie sono causate dal Colletotrichum .",
+      "target_words_in_it": [
+        "Colletotrichum"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Un piccolo numero di lieviti come la \" Candida albicans \", pu\u00f2 causare infezioni nell'uomo.",
+      "target_words_in_it": [
+        "Candida albicans"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Il genere \u00e8 stato introdotto nel 1998 come \" genere dei virus che somigliano al virus Ebola \" .",
+      "target_words_in_it": [
+        "virus Ebola"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "CEL": [
+    {
+      "sentence": "Questa \u00e8 una lista degli \" anelli di Urano \" a cui \u00e8 stato dato un nome .",
+      "target_words_in_it": [
+        "anelli di Urano"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "\" NGC 5746 \" \u00e8 una galassia a spirale barrata della costellazione della Vergine .",
+      "target_words_in_it": [
+        "NGC 5746",
+        "costellazione della Vergine",
+        "galassia a spirale barrata"
+      ],
+      "occurrences_count": 3
+    },
+    {
+      "sentence": "Il Sole entra nel segno astrologico della Vergine alle ore 02:36 .",
+      "target_words_in_it": [
+        "Vergine",
+        "Sole"
+      ],
+      "occurrences_count": 2
+    }
+  ],
+  "DIS": [
+    {
+      "sentence": "La formazione di fistole artero-venose polmonari pu\u00f2 portare a una sindrome cianotica .",
+      "target_words_in_it": [
+        "fistole artero-venose polmonari"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Oltre questa distanza , \u00e8 in atto convenzionalmente la patologia chiamata presbiopia .",
+      "target_words_in_it": [
+        "presbiopia"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Le loro caratteristiche variano a seconda delle ansie , delle paure o degli obiettivi del bambino .",
+      "target_words_in_it": [
+        "ansie"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "EVE": [
+    {
+      "sentence": "La pellicola \u00e8 stata presentata al Sundance Film Festival il 23 gennaio 2015 .",
+      "target_words_in_it": [
+        "Sundance Film Festival"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Prese poi parte , senza grandi pretese , al Tour de France .",
+      "target_words_in_it": [
+        "Tour de France"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Nel 2008 viene convocato per gli Europei in Austria e Svizzera .",
+      "target_words_in_it": [
+        "Europei"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "FOOD": [
+    {
+      "sentence": "Sono piante visitate dalle api per la produzione di miele di melata .",
+      "target_words_in_it": [
+        "miele"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "\u00c8 ovoviviparo e gli embrioni si nutrono solamente di tuorlo .",
+      "target_words_in_it": [
+        "tuorlo"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Viene fritta in olio , poi immersa nel miele e poi vengono aggiunti i semi di sesamo .",
+      "target_words_in_it": [
+        "olio",
+        "miele",
+        "semi di sesamo"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "INST": [
+    {
+      "sentence": "A gennaio 1977 , e le vendite dei suoi computer , tra cui l' Apple II , crebbero rapidamente .",
+      "target_words_in_it": [
+        "Apple II"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "\u00e8 disponibile in due versioni : in Java e in Flash .",
+      "target_words_in_it": [
+        "Flash"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "La console legge anche CD-ROM , Super Audio CD e DVD-ROM .",
+      "target_words_in_it": [
+        "CD-ROM",
+        "Super Audio CD",
+        "DVD-ROM"
+      ],
+      "occurrences_count": 3
+    }
+  ],
+  "LOC": [
+    {
+      "sentence": "La massima altitudine \u00e8 la cima Carega ( 2259 \" m ) .",
+      "target_words_in_it": [
+        "cima Carega"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Protagonista una ristretta cerchia di conoscenti dell' Oregon .",
+      "target_words_in_it": [
+        "Oregon"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Nel 2002 lanciano un' iniziativa contro lo sfruttamento della prostituzione minorile in Indocina .",
+      "target_words_in_it": [
+        "Indocina"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "MEDIA": [
+    {
+      "sentence": "Il nuovo album si intitoler\u00e0 \" Hollywood Trash \" e verr\u00e0 realizzato nel 2001 .",
+      "target_words_in_it": [
+        "Hollywood Trash"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Divenne anche corrispondente estero per \" The New Yorker \" .",
+      "target_words_in_it": [
+        "The New Yorker"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Durante il tour di Turn on the bright lights si occupa di entrambi gli strumenti anche dal vivo .",
+      "target_words_in_it": [
+        "Turn on the bright lights"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "MYTH": [
+    {
+      "sentence": "Asclepio era il dio della salute nell' antico pantheon greco .",
+      "target_words_in_it": [
+        "Asclepio"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Secondo eruditi locali settecenteschi sarebbe stato dedicato a Diana .",
+      "target_words_in_it": [
+        "Diana"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "In questo testo veniva riportato l' arrivo di Enea nel Lazio e la storia di Romolo e Remo .",
+      "target_words_in_it": [
+        "Romolo e Remo",
+        "Enea"
+      ],
+      "occurrences_count": 2
+    }
+  ],
+  "ORG": [
+    {
+      "sentence": "Nell' estate del 2012 fa rientro all' Udinese diventando portiere titolare della prima squadra .",
+      "target_words_in_it": [
+        "Udinese"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Cresciuto a Berlino , si laurea in filosofia presso l' Universit\u00e0 Ebraica di Gerusalemme .",
+      "target_words_in_it": [
+        "Universit\u00e0 Ebraica di Gerusalemme"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "La \" Kriegsmarine \" rispose prontamente identificando ed eliminando i difetti .",
+      "target_words_in_it": [
+        "Kriegsmarine"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "PER": [
+    {
+      "sentence": "Altri grandi piloti ad usarlo furono Georges Guynemer , Ren\u00e9 Fonck e Eddie Rickenbacker .",
+      "target_words_in_it": [
+        "Eddie Rickenbacker",
+        "Georges Guynemer",
+        "Ren\u00e9 Fonck"
+      ],
+      "occurrences_count": 3
+    },
+    {
+      "sentence": "In questo periodo anche Kevin Ayers entra nel gruppo , di cui diviene membro occasionale .",
+      "target_words_in_it": [
+        "Kevin Ayers"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Qui conobbe il cantante e chitarrista Jo\u00e3o Gilberto , anche lui bahiano , che spos\u00f2 nel 1959 .",
+      "target_words_in_it": [
+        "Jo\u00e3o Gilberto"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "PLANT": [
+    {
+      "sentence": "La vegetazione prevalente \u00e8 composta da \" Suaeda vera \" .",
+      "target_words_in_it": [
+        "Suaeda vera"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "\u00c8 questo il limite meridionale dell' areale del faggio ( \" Fagus sylvatica \" ) .",
+      "target_words_in_it": [
+        "Fagus sylvatica"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Questa trib\u00f9 comprende alberi , arbusti , subarbusti ed erbe perenni o annue .",
+      "target_words_in_it": [
+        "arbusti",
+        "erbe",
+        "alberi"
+      ],
+      "occurrences_count": 3
+    }
+  ],
+  "TIME": [
+    {
+      "sentence": "Il primo trailer del film viene diffuso il 4 dicembre 2015 .",
+      "target_words_in_it": [
+        "4 dicembre 2015"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Nel 1938 compirono il loro unico viaggio all' estero , trascorrendo una settimana a Londra .",
+      "target_words_in_it": [
+        "1938"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Attiguo alla parrocchiale \u00e8 il campanile , risalente all' incirca all' inizio del XIX secolo .",
+      "target_words_in_it": [
+        "inizio del XIX secolo"
+      ],
+      "occurrences_count": 1
+    }
+  ],
+  "VEHI": [
+    {
+      "sentence": "La DBR9 e la Vantage GT2 sono state invece riservate per la vendita a scuderie private .",
+      "target_words_in_it": [
+        "DBR9",
+        "Vantage GT2"
+      ],
+      "occurrences_count": 2
+    },
+    {
+      "sentence": "L' incrociatore da battaglia \" Akagi \" fu completato come portaerei .",
+      "target_words_in_it": [
+        "Akagi"
+      ],
+      "occurrences_count": 1
+    },
+    {
+      "sentence": "Il resto del corpo vettura era simile a quello delle TR4 / TR5 .",
+      "target_words_in_it": [
+        "TR4"
+      ],
+      "occurrences_count": 1
+    }
+  ]
+}

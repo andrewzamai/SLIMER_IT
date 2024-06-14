@@ -66,7 +66,7 @@ class KIND(Data_Interface):
     def get_map_to_extended_NE_name(self):
         return {
             'PER': 'persona',
-            'LOC': 'località',
+            'LOC': 'luogo',
             'ORG': 'organizzazione'
         }
 

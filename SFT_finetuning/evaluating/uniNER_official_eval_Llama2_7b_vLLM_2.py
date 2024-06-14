@@ -28,6 +28,7 @@ import uniNER_official_eval_script
 
 # my libraries
 from src.data_handlers.KIND import KIND
+from src.data_handlers.Multinerd_it import Multinerd_it
 
 from ..commons.initialization import get_HF_access_token
 from ..commons.preprocessing import truncate_input
@@ -39,7 +40,7 @@ def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, d
         path_to_BIO += '/evalita-2023'
     path_to_guidelines = None
     if with_definition:
-        path_to_guidelines = f'./src/def_and_guidelines/{datasets_cluster_name}.jsonl'
+        path_to_guidelines = f'./src/def_and_guidelines/{datasets_cluster_name}.json'
     dataset_manager = data_handler(path_to_BIO,
                                 path_to_templates='./src/templates',
                                 SLIMER_prompter_name='SLIMER_instruction_it',
@@ -62,7 +63,8 @@ def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, d
 if __name__ == '__main__':
 
     to_eval_on = [
-        {'datasets_cluster_name': 'KIND', 'data_handler': KIND, 'subdataset_names': ['WN', 'FIC', 'ADG']},
+        {'datasets_cluster_name': 'Multinerd_it', 'data_handler': Multinerd_it, 'subdataset_names': ['it']},
+        {'datasets_cluster_name': 'KIND', 'data_handler': KIND, 'subdataset_names': ['WN', 'FIC', 'ADG']}
     ]
 
     parser = argparse.ArgumentParser(description='''SLIMER-IT evaluation on TEST datasets''')
@@ -321,12 +323,12 @@ if __name__ == '__main__':
     print("\nDONE :)")
 
     #TODO: DELETING MODEL!
-    """
+
     print("Assuming model is on HF, deleting model!!!")
     if 'andrewzamai' in model_path_or_name:
         model_path_or_name = os.path.join('./hf_cache_dir', 'models--andrewzamai--' + model_path_or_name.split("/")[-1])
 
     shutil.rmtree(model_path_or_name)
-    """
+
 
     sys.stdout.flush()

@@ -6,8 +6,8 @@
   },
   {
     "ne_tag": "LOC",
-    "real_name": "località",
-    "gpt_DeG": "{\"Definition\": \"'LOCALITÀ' denota nomi propri di luoghi geografici, comprendendo città, paesi, stati, regioni, continenti, punti di interesse naturale, e indirizzi specifici.\", \"Guidelines\": \"Assicurati di non confondere i nomi di luoghi con nomi di persone, organizzazioni o altre entità. Ad esempio, 'Washington', potrebbe riferirsi alla città di Washington D.C. o al presidente George Washington, quindi considera attentamente il contesto. Escludi nomi di periodi storici, eventi o concetti astratti che non rappresentano luoghi fisici. Ad esempio, 'nel Rinascimento' è un periodo storico, non una località geografica.\"}"
+    "real_name": "luogo",
+    "gpt_DeG": "{\"Definition\": \"'LUOGO' denota nomi propri di luoghi geografici, comprendendo città, paesi, stati, regioni, continenti, punti di interesse naturale, e indirizzi specifici.\", \"Guidelines\": \"Assicurati di non confondere i nomi di luoghi con nomi di persone, organizzazioni o altre entità. Ad esempio, 'Washington', potrebbe riferirsi alla città di Washington D.C. o al presidente George Washington, quindi considera attentamente il contesto. Escludi nomi di periodi storici, eventi o concetti astratti che non rappresentano luoghi fisici. Ad esempio, 'nel Rinascimento' è un periodo storico, non un luogo geografico.\"}"
   },
   {
     "ne_tag": "ORG",
