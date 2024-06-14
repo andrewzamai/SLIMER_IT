@@ -1,8 +1,18 @@
-from abc import ABC, abstractmethod
-from collections import OrderedDict
-from datasets import Dataset, DatasetDict
+"""
+An abstract class for SLIMER to interface with any NER dataset.
 
+Inherit from this class and define the abstract methods:
+- load_datasetdict_BIO: load the BIO dataset and return a DatasetDict of Datasets with (tokens, labels, id) features
+"""
+
+__package__ = "SLIMER_IT.src.data_handlers"
+
+from abc import ABC, abstractmethod
+from datasets import Dataset, DatasetDict
+from collections import OrderedDict
+from typing import Union
 import numpy as np
+import math
 import json
 import os
 import re
@@ -11,11 +21,19 @@ from src.SLIMER_Prompter import SLIMER_Prompter
 
 class Data_Interface(ABC):
 
-    def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG):
+    def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG: Union[None, str] = None):
+        """
+        Instantiate a NER dataset for SLIMER
+        :param path_to_BIO: the path to the folder with BIO data
+        :param path_to_templates: path to folder with SLIMER prompts
+        :param SLIMER_prompter_name: the name of a SLIMER prompt
+        :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G
+        """
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO)
         self.ne_categories = self.get_ne_categories()
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
         self.path_to_DeG = path_to_DeG
+        self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER()
 
     @abstractmethod
     def load_datasetdict_BIO(self, path_to_BIO):
@@ -86,6 +104,7 @@ class Data_Interface(ABC):
         return sample_gold_spans_per_ne
 
     def load_DeG_per_NEs(self):
+        """ load json and eval the D&G for each NE """
         if not self.path_to_DeG:
             raise Exception("Path to Def & Guidelines not provided")
         if not os.path.exists(self.path_to_DeG):
@@ -111,9 +130,11 @@ class Data_Interface(ABC):
 
         return DeG_per_NEs_raw
 
-    def convert_dataset_for_SLIMER(self, with_DeG=False):
+    def convert_dataset_for_SLIMER(self):
+        """ convert Dataset from BIO to SLIMER format
+        with features: doc_tag_pairID, tagName, input, instruction (with D&G if path_to_DeG provided) and output the gold answers spans """
         dataset_dict_SLIMER = {split: [] for split in self.datasetdict_BIO.keys()}
-        if with_DeG:
+        if self.path_to_DeG:
             DeG_per_NEs = self.load_DeG_per_NEs()
         for split_name, dataset_BIO in self.datasetdict_BIO.items():
             for sample_BIO in dataset_BIO:
@@ -124,11 +145,10 @@ class Data_Interface(ABC):
                     guidelines = ''
 
                     ne_tag_extended = self.get_map_to_extended_NE_name()[ne_tag].upper()
-                    if with_DeG:
+                    if self.path_to_DeG:
                         ne_tag_extended = DeG_per_NEs[ne_tag]['real_name'].upper()
                         definition = DeG_per_NEs[ne_tag]['gpt_DeG']['Definition']
                         guidelines = DeG_per_NEs[ne_tag]['gpt_DeG']['Guidelines']
-
 
                     instruction = self.slimer_prompter.generate_prompt(ne_tag=ne_tag_extended,
                                                                        definition=definition,
@@ -152,6 +172,54 @@ class Data_Interface(ABC):
                     tag_ID += 1
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_SLIMER.items()})
+
+    def get_Npos_Mneg_per_topXtags(self, N_pos, M_neg, topXtags=-1):
+        """
+        build dataset with N positive samples per NE and M negative samples per NE
+        train fold with N + M samples per NE
+        validation fold with ceil(N/4) + ceil(N/4) samples per NE
+        test fold is copied unchanged
+        """
+        # if keep_only_top_tagNames > -1 and keep_only_top_tagNames != 391:
+            # dataset_MSEQA_format = keep_only_top_N_tagNames(dataset_MSEQA_format, keep_only_top_tagNames)
+
+        n_samples_per_NE_dataset = {split: [] for split in self.dataset_dict_SLIMER.keys()}
+        n_samples_per_NE_dataset['test'] = self.dataset_dict_SLIMER['test']  # copy test fold unchanged
+        for split in self.dataset_dict_SLIMER.keys():
+            # shuffle dataset so input texts are not grouped
+            self.dataset_dict_SLIMER[split] = self.dataset_dict_SLIMER[split].shuffle(seed=42)
+            # draw reduced samples only for train and validation
+            if split != 'test':
+                # count how many pos/neg samples we have per NE
+                ne_list = {}
+                for sample in self.dataset_dict_SLIMER[split]:
+                    ne_type = sample['tagName']
+                    if ne_type not in ne_list:
+                        ne_list[ne_type] = {'yes_answer': 0, 'no_answer': 0}
+                    if sample['output'] == '[]':
+                        ne_list[ne_type]['no_answer'] += 1
+                    else:
+                        ne_list[ne_type]['yes_answer'] += 1
+
+                # if validation use 1/4 samples per NE
+                if split == 'validation':
+                    N_pos = math.ceil(N_pos/4.0)
+                    M_neg = math.ceil(M_neg/4.0)
+                ne_list = {ne: {'yes_answer': N_pos if values['yes_answer'] > N_pos else values['yes_answer'], 'no_answer': M_neg if values['no_answer'] > M_neg else values['no_answer']} for ne, values in ne_list.items()}
+
+                for sample in self.dataset_dict_SLIMER[split]:
+                    has_answer = 'yes_answer'
+                    if sample['output'] == '[]':
+                        has_answer = 'no_answer'
+                    if ne_list[sample['tagName']][has_answer] > 0:
+                        n_samples_per_NE_dataset[split].append(sample)
+                        ne_list[sample['tagName']][has_answer] -= 1
+
+                # random.shuffle(n_samples_per_NE_dataset[split])
+
+        return DatasetDict({split: Dataset.from_list(values) for split, values in n_samples_per_NE_dataset.items()})
+
+
 
 
 

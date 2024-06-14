@@ -1,0 +1,6 @@
+{
+    "description": "Template for LLaMA2 in Italian",
+    "prompt_input": "[INST] Ti viene fornito un input di testo (delimitato da tre virgolette) e un'istruzione. \nLeggi il testo e rispondi all'istruzione alla fine.\n\"\"\"\n{input}\n\"\"\"\nIstruzione: {instruction}\n[/INST]\n",
+    "prompt_no_input": "[INST] Ti viene data un'istruzione.\nRispondi all'istruzione.\nIstruzione: {instruction}\n[/INST]\n",
+    "response_split": "[/INST]"
+}

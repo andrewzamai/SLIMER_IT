@@ -11,7 +11,7 @@ import os
 import re
 
 # ABSTRACT class which inherits from
-from Data_Interface import Data_Interface
+from src.data_handlers.Data_Interface import Data_Interface
 
 class KIND(Data_Interface):
 
@@ -75,7 +75,10 @@ if __name__ == '__main__':
 
     path_to_BIO = '../../datasets/KIND/evalita-2023'
 
-    dataset_KIND_manager = KIND(path_to_BIO, path_to_templates='../templates', SLIMER_prompter_name='SLIMER_instruction_it', path_to_DeG='../def_and_guidelines/KIND.jsonl')
+    dataset_KIND_manager = KIND(path_to_BIO,
+                                path_to_templates='../templates',
+                                SLIMER_prompter_name='SLIMER_instruction_it',
+                                path_to_DeG='../def_and_guidelines/KIND.jsonl')
 
     # statistics from BIO dataset
     dataset_statistics = dataset_KIND_manager.get_dataset_statistics()
@@ -96,6 +99,8 @@ if __name__ == '__main__':
         sample_w_gold_spans = dataset_KIND_manager.extract_gold_spans_per_ne_category(sample_BIO)
         print(sample_w_gold_spans)
 
-    dataset_dict_SLIMER = dataset_KIND_manager.convert_dataset_for_SLIMER(with_DeG=True)
+    dataset_dict_SLIMER = dataset_KIND_manager.convert_dataset_for_SLIMER()
     for split_name, dataset in dataset_dict_SLIMER.items():
         dataset.to_json(f'../../datasets/KIND/SLIMER/{split_name}.jsonl')
+
+
