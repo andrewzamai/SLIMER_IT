@@ -3,6 +3,7 @@ KIND (Kessler Italian Named-entities Dataset), evalita-2023 dataset handler
 https://github.com/dhfbk/KIND/tree/main/evalita-2023
 
 Subdatasets: WN (wikinews), FIC (fiction), ADG (Alcide De Gasperi)
+(Letters from AldoMoro not used because silver annotations)
 """
 
 from datasets import Dataset, DatasetDict, load_dataset

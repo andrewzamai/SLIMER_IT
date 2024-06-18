@@ -39,8 +39,8 @@ class Multinerd_it(Data_Interface):
                 })
                 progressive_ID += 1
 
-            if progressive_ID == 1000:
-                break
+                if progressive_ID == 1000:
+                    break
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in new_dataset_dict_BIO_list.items()})
 

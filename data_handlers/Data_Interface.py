@@ -1,51 +1,65 @@
 """
 An abstract class for SLIMER to interface with any NER dataset.
 
+Initialize with path to json w/ D&G; default w/o D&G.
+
 Inherit from this class and define the abstract methods:
 - load_datasetdict_BIO: load the BIO dataset and return a DatasetDict of Datasets with (tokens, labels, id) features
+-
 """
 
 __package__ = "SLIMER_IT.src.data_handlers"
 
-import random
 from abc import ABC, abstractmethod
 from datasets import Dataset, DatasetDict
 from collections import OrderedDict
 from typing import Union
 import numpy as np
+import random
 import math
 import json
 import os
 import re
 
+# SLIMER prompter to format a ne_tag, Def and Guidelines into a prompt for NER
 from src.SLIMER_Prompter import SLIMER_Prompter
 
 class Data_Interface(ABC):
 
     def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG: Union[None, str] = None):
         """
-        Instantiate a NER dataset for SLIMER
+        Instantiate a NER dataset for SLIMER w/ D&G if provided path to json.
+
         :param path_to_BIO: the path to the folder with BIO data
-        :param path_to_templates: path to folder with SLIMER prompts
-        :param SLIMER_prompter_name: the name of a SLIMER prompt
-        :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G
+        :param path_to_templates: path to folder with SLIMER prompt templates
+        :param SLIMER_prompter_name: the name of a SLIMER prompt template
+        :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G instantiated
         """
         self.path_to_BIO = path_to_BIO
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO)
-        self.ne_categories = self.get_ne_categories()
+        self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
         self.path_to_DeG = path_to_DeG
         self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER()
 
     @abstractmethod
     def load_datasetdict_BIO(self, path_to_BIO):
+        """
+        Different NER datasets format their data in different ways: csv, tsv, ... and different column names
+        Define your implementation to load the data and return a DatasetDict of Datasets (train, validation, test)
+        with features: tokens (list), labels (list), id (int)
+        """
         pass
 
     @abstractmethod
     def get_map_to_extended_NE_name(self):
+        """ provide a dictionary that maps each NE tag to its extended name (e.g. PER to PERSON) """
         pass
 
     def get_ne_categories(self):
+        """
+        Parse the BIO labels to extract the NE tags: e.g. PER, ORG, LOC ...
+        """
         ne_categories = {}
         for split in self.datasetdict_BIO.keys():
             if split != 'dataset_name':
@@ -58,6 +72,9 @@ class Data_Interface(ABC):
         return [lbl[2:] for lbl in ne_categories_sorted if lbl[0] == 'B']
 
     def get_dataset_statistics(self):
+        """
+        Computes statistics for each BIO split.
+        """
         per_split_statistics = {split: {} for split in self.datasetdict_BIO.keys()}
         for split in per_split_statistics:
             context_lengths = []
@@ -77,7 +94,7 @@ class Data_Interface(ABC):
         return per_split_statistics
 
     def extract_gold_spans_per_ne_category(self, sample_BIO):
-        """ parse BIO labels for a sample to extract the gold spans (with start/end positions in chars) per NE category """
+        """ given a BIO sample parse its labels-list to extract the gold spans (with start/end positions in chars) for each NE tag """
         sample_gold_spans_per_ne = {ne: [] for ne in self.ne_categories}
         i = 0
         index = 0
@@ -106,7 +123,7 @@ class Data_Interface(ABC):
         return sample_gold_spans_per_ne
 
     def load_DeG_per_NEs(self):
-        """ load json and eval the D&G for each NE """
+        """ load json and eval to dictionary the D&G for each NE """
         if not self.path_to_DeG:
             raise Exception("Path to Def & Guidelines not provided")
         if not os.path.exists(self.path_to_DeG):
@@ -145,7 +162,7 @@ class Data_Interface(ABC):
                 for ne_tag, gold_spans in sample_gold_spans_per_ne.items():
                     definition = ''
                     guidelines = ''
-
+                    # get tag in its extended form and convert it to uppercase e.g. PERSON
                     ne_tag_extended = self.get_map_to_extended_NE_name()[ne_tag].upper()
                     if self.path_to_DeG:
                         ne_tag_extended = DeG_per_NEs[ne_tag]['real_name'].upper()
@@ -179,7 +196,7 @@ class Data_Interface(ABC):
         """
         build dataset with N positive samples per NE and M negative samples per NE
         train fold with N + M samples per NE
-        validation fold with ceil(N/4) + ceil(N/4) samples per NE
+        validation fold with ceil(N/4) + ceil(M/4) samples per NE
         test fold is copied unchanged
         """
         # if keep_only_top_tagNames > -1 and keep_only_top_tagNames != 391:
@@ -221,8 +238,7 @@ class Data_Interface(ABC):
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in n_samples_per_NE_dataset.items()})
 
-
-    """ Functions to extract N sentences per NE to show examples of NE in context """
+    """ Functions to extract N sentences per NE to show examples of NE in context for prompting ChatGPT for D&G"""
 
     @staticmethod
     def __split_into_sentences(passage):
@@ -297,7 +313,3 @@ class Data_Interface(ABC):
         print(not_enough_sentences)
 
         return sentences_per_ne_type
-
-
-
-
