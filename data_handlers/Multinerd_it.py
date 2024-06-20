@@ -12,12 +12,17 @@ from src.data_handlers.Data_Interface import Data_Interface
 
 class Multinerd_it(Data_Interface):
 
-    def load_datasetdict_BIO(self, path_to_BIO):
-        data_files = {
-            "train": os.path.join(path_to_BIO, 'train_it' + '.jsonl'),
-            "validation": os.path.join(path_to_BIO, 'val_it' + '.jsonl'),
-            "test": os.path.join(path_to_BIO, 'test_it' + '.jsonl')
-        }
+    def load_datasetdict_BIO(self, path_to_BIO, test_only=False):
+        if test_only:
+            data_files = {
+                "test": os.path.join(path_to_BIO, 'test_it' + '.jsonl')
+            }
+        else:
+            data_files = {
+                "train": os.path.join(path_to_BIO, 'train_it' + '.jsonl'),
+                "validation": os.path.join(path_to_BIO, 'val_it' + '.jsonl'),
+                "test": os.path.join(path_to_BIO, 'test_it' + '.jsonl')
+            }
         dataset_dict_BIO = load_dataset("json", data_files=data_files)
 
         # mapping ID to BIO label
@@ -39,8 +44,8 @@ class Multinerd_it(Data_Interface):
                 })
                 progressive_ID += 1
 
-                if progressive_ID == 1000:
-                    break
+                #if progressive_ID == 1000:
+                #    break
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in new_dataset_dict_BIO_list.items()})
 

@@ -1,9 +1,7 @@
 # fine-tuning Llama-3-8b instruct version on PileNER with topNE NEs and N samples per NE (N positive + N negative)
 
-base_model: meta-llama/Meta-Llama-3-8B-Instruct
-#base_model: meta-llama/Meta-Llama-3-8B
-#base_model: swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA
-prompt_template_name: llama3_italian
+base_model: mistralai/Mistral-7B-Instruct-v0.2
+prompt_template_name: llama2_italian
 # using dataset converted from MSEQA format to GenQA format (instruction, input, output) columns
 data_path: None
 val_data_path: None

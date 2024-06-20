@@ -44,7 +44,8 @@ def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, d
     dataset_manager = data_handler(path_to_BIO,
                                 path_to_templates='./src/templates',
                                 SLIMER_prompter_name='SLIMER_instruction_it',
-                                path_to_DeG=path_to_guidelines)
+                                path_to_DeG=path_to_guidelines,
+                                test_only=True)
 
     test_dataset = dataset_manager.dataset_dict_SLIMER['test']
     if subdataset_name != []:
@@ -63,8 +64,8 @@ def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, d
 if __name__ == '__main__':
 
     to_eval_on = [
-        {'datasets_cluster_name': 'Multinerd_it', 'data_handler': Multinerd_it, 'subdataset_names': ['it']},
-        {'datasets_cluster_name': 'KIND', 'data_handler': KIND, 'subdataset_names': ['WN', 'FIC', 'ADG']}
+        {'datasets_cluster_name': 'KIND', 'data_handler': KIND, 'subdataset_names': ['WN', 'FIC', 'ADG']},
+        {'datasets_cluster_name': 'Multinerd_it', 'data_handler': Multinerd_it, 'subdataset_names': ['it']}
     ]
 
     parser = argparse.ArgumentParser(description='''SLIMER-IT evaluation on TEST datasets''')

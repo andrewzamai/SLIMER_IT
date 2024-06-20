@@ -16,7 +16,7 @@ from src.data_handlers.Data_Interface import Data_Interface
 
 class KIND(Data_Interface):
 
-    def load_datasetdict_BIO(self, path_to_BIO):
+    def load_datasetdict_BIO(self, path_to_BIO, test_only=False):
 
         # match only files subdataset_split.tsv
         pattern = r'^[^_]*_[^_]*\.tsv$'
@@ -24,12 +24,18 @@ class KIND(Data_Interface):
         matching_files = [f for f in all_files if re.match(pattern, f)]
 
         # merge subdatasets per split giving ID e.g. 'WN:train:0'
-        dataset_dict = {split: [] for split in ['train', 'validation', 'test']}
+        dataset_dict = {'test': []} if test_only else {split: [] for split in ['train', 'validation', 'test']}
         for file_name in matching_files:
             ds_name, split_name = file_name[:-len('.tsv')].split('_')
             split_name = 'validation' if split_name == 'dev' else split_name
-            ds_content = self.__read_bio_file(os.path.join(path_to_BIO, file_name), ds_name, split_name)
-            dataset_dict[split_name].extend(ds_content)
+            # train only on WN subdataset to have ADG/FIC Out-Of-Domain
+            if split_name in ['train', 'validation'] and test_only:
+                pass
+            elif split_name == 'train' and ds_name in ['FIC', 'ADG']:
+                pass
+            else:
+                ds_content = self.__read_bio_file(os.path.join(path_to_BIO, file_name), ds_name, split_name)
+                dataset_dict[split_name].extend(ds_content)
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict.items()})
 
@@ -79,7 +85,8 @@ if __name__ == '__main__':
     dataset_KIND_manager = KIND(path_to_BIO,
                                 path_to_templates='../templates',
                                 SLIMER_prompter_name='SLIMER_instruction_it',
-                                path_to_DeG='../def_and_guidelines/KIND.jsonl')
+                                path_to_DeG='../def_and_guidelines/KIND.json',
+                                test_only=False)
 
     # statistics from BIO dataset
     dataset_statistics = dataset_KIND_manager.get_dataset_statistics()
@@ -88,12 +95,12 @@ if __name__ == '__main__':
     dataset_dict_BIO = dataset_KIND_manager.datasetdict_BIO
 
     print(dataset_dict_BIO.keys())
-    print(dataset_dict_BIO['train'][0:10])
+    print(dataset_dict_BIO['test'][0:10])
 
     ne_categories = dataset_KIND_manager.get_ne_categories()
     print(ne_categories)
 
-    sample_BIO_list = Dataset.from_dict(dataset_dict_BIO['train'][0:10])
+    sample_BIO_list = Dataset.from_dict(dataset_dict_BIO['test'][0:10])
     for sample_BIO in sample_BIO_list:
         print(sample_BIO['tokens'])
         print(sample_BIO['labels'])

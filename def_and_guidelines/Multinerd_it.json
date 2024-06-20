@@ -227,7 +227,7 @@
     ],
     "prompt_length": 598,
     "output_length": 156,
-    "gpt_DeG": "{\"Definition\": \"'localit\u00e0' identifica specifiche aree geografiche, come montagne, fiumi, deserti, isole, regioni, e altre caratteristiche geografiche distinte.\", \"Guidelines\": \"Evita di etichettare concetti astratti o nomi generici come 'localit\u00e0'. Ad esempio, 'massima altitudine' \u00e8 una caratteristica geografica, ma non \u00e8 una 'localit\u00e0'. Assicurati di distinguere tra nomi geografici specifici e concetti generali che potrebbero essere confusi come 'localit\u00e0'. Ad esempio, 'prostituzione minorile' \u00e8 un problema sociale, non una 'localit\u00e0'.\"}",
+    "gpt_DeG": "{\"Definition\": \"'localit\u00e0' identifica specifiche aree geografiche, come montagne, fiumi, deserti, isole, regioni, e altre caratteristiche geografiche distinte.\", \"Guidelines\": \"Evita di etichettare concetti astratti o nomi generici come 'localit\u00e0'. Ad esempio, 'massima altitudine' \u00e8 una caratteristica geografica, ma non \u00e8 una 'localit\u00e0'. Assicurati di distinguere tra nomi geografici specifici e concetti generali che potrebbero essere confusi come 'localit\u00e0'.\"}",
     "finish_reason": "stop"
   },
   {

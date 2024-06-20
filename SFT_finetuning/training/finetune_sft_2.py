@@ -341,12 +341,14 @@ if __name__ == "__main__":
     # load HuggingFace access token with permissions to LLAMA2/3 repo
     # place token in .env file, otherwise skip
     from huggingface_hub import login
+
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
     # with_guidelines, number_NEs, number_pos_samples_per_NE, number_neg_samples_per_NE
     # use number_NEs=-1 to use all tags
-    parser = argparse.ArgumentParser(description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
+    parser = argparse.ArgumentParser(
+        description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
     # adding arguments
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
@@ -361,7 +363,8 @@ if __name__ == "__main__":
     print("number_pos_samples_per_NE:", args.number_pos_samples_per_NE)
     print("number_neg_samples_per_NE:", args.number_neg_samples_per_NE)
 
-    dataset_name = f"KIND_{args.number_NEs}x{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_{args.with_guidelines}Def"
+    # TRAIN ON WN subdataset of KIND ONLY!
+    dataset_name = f"KIND_WN_only_{args.number_NEs}x{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_{args.with_guidelines}Def"
 
     from src.data_handlers.KIND import KIND
 
@@ -372,7 +375,8 @@ if __name__ == "__main__":
     dataset_KIND_manager = KIND(path_to_KIND_BIO,
                                 path_to_templates='./src/templates',
                                 SLIMER_prompter_name='SLIMER_instruction_it',
-                                path_to_DeG=path_to_KIND_guidelines)
+                                path_to_DeG=path_to_KIND_guidelines,
+                                test_only=False)
 
     reduced_train_val_test_KIND = dataset_KIND_manager.get_Npos_Mneg_per_topXtags(N_pos=args.number_pos_samples_per_NE,
                                                                                   M_neg=args.number_neg_samples_per_NE,
@@ -385,10 +389,14 @@ if __name__ == "__main__":
     path_to_training_config = './src/SFT_finetuning/training_config/llama2_4_NER_XDef_NsamplesPerNE.yml'
     with open(path_to_training_config, 'rb') as f:
         configs = yaml.safe_load(f.read())
+
+    base_model_name = configs['base_model'].split('/')[-1]
+    print(f"Using as base model: {base_model_name}")
     configs['data_path'] = f"./datasets/KIND/SLIMER/{dataset_name}/train.jsonl"
     configs['val_data_path'] = f"./datasets/KIND/SLIMER/{dataset_name}/validation.jsonl"
 
-    configs['output_dir'] = f"./trained_models/llama2_7B_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    configs[
+        'output_dir'] = f"./trained_models/{base_model_name}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
 
     train(**configs)
 

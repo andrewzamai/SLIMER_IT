@@ -1,18 +1,9 @@
 """
-Evaluating pileNER-finetuned Llama-3-(B for zero-shot NER on CrossNER/MIT/BUSTER datasets
+Evaluating SLIMER-IT Llama-2-7B for zero-shot NER on Italian datasets
 
 - Using provided uniNER official evaluation script
 
 - Using vLLM library for faster inference
-
-UniNER's authors provide the crossNER/MIT test datasets already converted to QA format
-./datasets/eval_data_UniNER/CrossNER_ai.json
-
-Importantly these provided datasets exclude MISCELLANEOUS class
-
-We use convert_official_uniNER_eval_dataset_for_GenQA for:
- - replacing question with definition if with_definition=True
- - format to input expected by SFT_finetuning preprocess and tokenizer function
 """
 
 __package__ = "SFT_finetuning.evaluating"
@@ -36,54 +27,48 @@ import re
 import uniNER_official_eval_script
 
 # my libraries
-from MSEQA_4_NER.data_handlers import data_handler_pileNER, data_handler_BUSTER
+from src.data_handlers.KIND import KIND
+from src.data_handlers.Multinerd_it import Multinerd_it
+
 from ..commons.initialization import get_HF_access_token
 from ..commons.preprocessing import truncate_input
 from ..commons.prompter import Prompter
 
-
 def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, data_handler, with_definition):
-    """
-    universal-ner github provides the crossNER and MIT NER-datasets already in a conversation-QA format (eval_dataset_uniNER folder);
-    here we convert the dataset to our usual features and replace "question" with the NE definition if with_definition=True
-    """
-    print("\nLoading train/validation/test Datasets in QA format...")
-    print(" ...converting uniNER Datasets in our GenQA format for inference\n")
-    sys.stdout.flush()
+    path_to_BIO = f'./datasets/{datasets_cluster_name}'
+    if datasets_cluster_name == 'KIND':
+        path_to_BIO += '/evalita-2023'
+    path_to_guidelines = None
+    if with_definition:
+        path_to_guidelines = f'./src/def_and_guidelines/{datasets_cluster_name}.json'
+    dataset_manager = data_handler(path_to_BIO,
+                                path_to_templates='./src/templates',
+                                SLIMER_prompter_name='SLIMER_instruction_it',
+                                path_to_DeG=path_to_guidelines,
+                                test_only=True)
 
-    if datasets_cluster_name == 'pileNER':
-        if with_definition:
-            # already existing pileNER test fold in GenQA format
-            path_to_pileNER_test_GenQA_format = './datasets/pileNER/GenQA_format_TrueDef/test.jsonl'
-            return load_dataset("json", data_files=path_to_pileNER_test_GenQA_format)['train']
-        else:
-            path_to_pileNER_test_GenQA_format = './datasets/pileNER/GenQA_format_FalseDef/test.jsonl'
-            return load_dataset("json", data_files=path_to_pileNER_test_GenQA_format)['train']
+    test_dataset = dataset_manager.dataset_dict_SLIMER['test']
+    if subdataset_name != []:
+        def filter_by_prefix(dataset, subdata_name):
+            def filter_function(example):
+                id_prefix = example["doc_tag_pairID"].split(":")[0]
+                return id_prefix == subdata_name
+            return dataset.filter(filter_function)
 
-    elif datasets_cluster_name == 'BUSTER':
-        if with_definition:
-            path_to_BUSTER_MSEQA = f"./datasets/BUSTER/MSEQA_format_guidelines/BUSTER"
-        else:
-            path_to_BUSTER_MSEQA = f"./datasets/BUSTER/MSEQA_format_no_def/BUSTER"
-        dataset_MSEQA_format = DatasetDict.load_from_disk(path_to_BUSTER_MSEQA)
-        # TODO: changed to same instruction
-        return data_handler.convert_MSEQA_dataset_to_GenQA_format_SI(dataset_MSEQA_format, with_definition, path_to_save_to=f"./datasets/BUSTER/GenQA_format_{with_definition}Def", only_test=True)['test']
+        # Apply the filter
+        test_dataset = filter_by_prefix(test_dataset, subdataset_name)
 
-    else:
-        if datasets_cluster_name == 'crossNER':
-            path_to_eval_dataset_uniNER = f"./datasets/eval_data_UniNER/CrossNER_{subdataset_name}.json"
-        else:
-            path_to_eval_dataset_uniNER = f"./datasets/eval_data_UniNER/mit-{subdataset_name}.json"
-        path_to_guidelines_folder = f"./src/MSEQA_4_NER/data_handlers/questions/{datasets_cluster_name}/gpt_guidelines"
-        # load definitions also if with_def False to map NEs to their canonical names
-        path_to_subdataset_guidelines = os.path.join(path_to_guidelines_folder, subdataset_name + '_NE_definitions.json')
-        # TODO: changed to same instruction
-        return data_handler.convert_official_uniNER_eval_dataset_for_GenQA_same_instruction(subdataset_name, path_to_eval_dataset_uniNER, with_definition, path_to_subdataset_guidelines)
+    return test_dataset
 
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='''Llama eval parser same instructions''')
+    to_eval_on = [
+        {'datasets_cluster_name': 'Multinerd_it', 'data_handler': Multinerd_it, 'subdataset_names': ['it']},
+        {'datasets_cluster_name': 'KIND', 'data_handler': KIND, 'subdataset_names': ['WN', 'FIC', 'ADG']}
+    ]
+
+    parser = argparse.ArgumentParser(description='''SLIMER-IT evaluation on TEST datasets''')
     # adding arguments
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
@@ -94,15 +79,7 @@ if __name__ == '__main__':
 
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
 
-    print("CrossNER/MIT/BUSTER ZERO-SHOT NER EVALUATIONS with UniNER official eval script and datasets (w/o misc):\n")
-
-    to_eval_on = [
-        # converting from uniNER eval datasets using function inside data_handler_pileNER
-        {'datasets_cluster_name': 'crossNER', 'data_handler': data_handler_pileNER, 'subdataset_names': ['ai', 'literature', 'music', 'politics', 'science']},
-        {'datasets_cluster_name': 'MIT', 'data_handler': data_handler_pileNER, 'subdataset_names': ['movie', 'restaurant']},
-        {'datasets_cluster_name': 'BUSTER', 'data_handler': data_handler_BUSTER, 'subdataset_names': ['BUSTER']},
-        # {'datasets_cluster_name': 'pileNER', 'data_handler': data_handler_pileNER, 'subdataset_names': ['pileNER']},
-    ]
+    print("SLIMER-IT ZERO-SHOT NER EVALUATIONS with UniNER official eval script:\n")
 
     WITH_DEFINITION = args.with_guidelines
     print(f"\nWith definition: {WITH_DEFINITION}")
@@ -110,7 +87,7 @@ if __name__ == '__main__':
     partial_evaluate = False
     print(f"\npartial_evaluate: {partial_evaluate}")
 
-    model_path_or_name = f"./merged_models/llama3_8B_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-SI-plain"
+    model_path_or_name = f"./merged_models/Mistral-7B-Instruct-v0.2_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
     print(f"LLM model: {model_path_or_name}")
 
     max_new_tokens = 128
@@ -120,10 +97,8 @@ if __name__ == '__main__':
 
     tokenizer = vllm_model.get_tokenizer()
 
-    #sampling_params = SamplingParams(temperature=0, max_tokens=max_new_tokens, stop_token_ids=[tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|eot_id|>")])
-    #sampling_params = SamplingParams(temperature = 0.5, top_p = 0.9, max_tokens = 128)
-                                     #stop_token_ids = [tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|eot_id|>")])
-    sampling_params = SamplingParams(temperature=0, max_tokens=max_new_tokens)
+    sampling_params = SamplingParams(temperature=0, max_tokens=max_new_tokens, stop=['</s>'])
+
     """
     # beam search generation
     sampling_params = SamplingParams(
@@ -139,7 +114,7 @@ if __name__ == '__main__':
 
     print(sampling_params)
 
-    prompter = Prompter('llama3', template_path='./src/SFT_finetuning/templates')
+    prompter = Prompter('llama2_italian', template_path='./src/SFT_finetuning/templates', eos_text='')
 
     for data in to_eval_on:
 
@@ -216,7 +191,7 @@ if __name__ == '__main__':
                     instruction = sample['instruction']
                     chunks = chunk_document_w_sliding_window(document_input, window_size=900, overlap=15)
                     for chunk_input in chunks:
-                        chunks_per_sample[sample['doc_question_pairID']].append(chunk_id)
+                        chunks_per_sample[sample['doc_tag_pairID']].append(chunk_id)
                         batch_instruction_input_pairs.append((instruction, chunk_input))
                         chunk_id += 1
 
@@ -233,9 +208,6 @@ if __name__ == '__main__':
 
             responses = vllm_model.generate(prompts, sampling_params)
 
-            #print(responses)
-            #sys.stdout.flush()
-
             # should be already ordered by the vLLM engine
             responses_corret_order = []
             response_set = {response.prompt: response for response in responses}
@@ -250,7 +222,7 @@ if __name__ == '__main__':
                 all_pred_answers_aggregated = []
                 # for sample_ID, chunks_indices in chunks_per_sample.items():
                 for sample in dataset_GenQA_format:
-                    sampleID = sample['doc_question_pairID']
+                    sampleID = sample['doc_tag_pairID']
                     chunks_indices = chunks_per_sample[sampleID]
                     document_level_preds = set()
                     for idx in chunks_indices:
@@ -336,7 +308,7 @@ if __name__ == '__main__':
             preds_to_save = []
             for i, sample in enumerate(dataset_GenQA_format):
                 preds_to_save.append({
-                    'doc_question_pairID': sample['doc_question_pairID'],
+                    'doc_tag_pairID': sample['doc_tag_pairID'],
                     'tagName': sample['tagName'],
                     'gold_answers': all_gold_answers[i],
                     'pred_answers': all_pred_answers[i]
@@ -352,10 +324,12 @@ if __name__ == '__main__':
     print("\nDONE :)")
 
     #TODO: DELETING MODEL!
-    #print("Assuming model is on HF, deleting model!!!")
-    #if 'andrewzamai' in model_path_or_name:
-    #    model_path_or_name = os.path.join('./hf_cache_dir', 'models--andrewzamai--' + model_path_or_name.split("/")[-1])
 
-    # shutil.rmtree(model_path_or_name)
+    print("Assuming model is on HF, deleting model!!!")
+    if 'andrewzamai' in model_path_or_name:
+        model_path_or_name = os.path.join('./hf_cache_dir', 'models--andrewzamai--' + model_path_or_name.split("/")[-1])
+
+    shutil.rmtree(model_path_or_name)
+
 
     sys.stdout.flush()

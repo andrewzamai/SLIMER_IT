@@ -55,8 +55,8 @@ if __name__ == "__main__":
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    #base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
-    base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    base_model = "mistralai/Mistral-7B-Instruct-v0.2"
+    #base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
     #base_model = "meta-llama/Meta-Llama-3-8B"
     # as it is the code requires namespace/model_name format only, no more subfolders
     print(f"Base model for merging: {base_model}")
@@ -69,8 +69,8 @@ if __name__ == "__main__":
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
-    path_to_lora = f"./trained_models/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
-    save_model_at = f"./merged_models/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
 
     merge_main(base_model, path_to_lora, save_model_at)
 

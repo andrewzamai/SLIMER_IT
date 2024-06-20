@@ -1,11 +1,10 @@
 """
 An abstract class for SLIMER to interface with any NER dataset.
 
-Initialize with path to json w/ D&G; default w/o D&G.
+Initialize with path to json w/ D&G for each NE; default w/o D&G.
 
 Inherit from this class and define the abstract methods:
 - load_datasetdict_BIO: load the BIO dataset and return a DatasetDict of Datasets with (tokens, labels, id) features
--
 """
 
 __package__ = "SLIMER_IT.src.data_handlers"
@@ -26,7 +25,7 @@ from src.SLIMER_Prompter import SLIMER_Prompter
 
 class Data_Interface(ABC):
 
-    def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG: Union[None, str] = None):
+    def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG: Union[None, str] = None, test_only=False):
         """
         Instantiate a NER dataset for SLIMER w/ D&G if provided path to json.
 
@@ -36,14 +35,14 @@ class Data_Interface(ABC):
         :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G instantiated
         """
         self.path_to_BIO = path_to_BIO
-        self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO)
+        self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO, test_only)
         self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
         self.path_to_DeG = path_to_DeG
         self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER()
 
     @abstractmethod
-    def load_datasetdict_BIO(self, path_to_BIO):
+    def load_datasetdict_BIO(self, path_to_BIO, test_only=False):
         """
         Different NER datasets format their data in different ways: csv, tsv, ... and different column names
         Define your implementation to load the data and return a DatasetDict of Datasets (train, validation, test)
@@ -220,11 +219,25 @@ class Data_Interface(ABC):
                     else:
                         ne_list[ne_type]['yes_answer'] += 1
 
-                # if validation use 1/4 samples per NE
-                if split == 'validation':
-                    N_pos = math.ceil(N_pos/4.0)
-                    M_neg = math.ceil(M_neg/4.0)
-                ne_list = {ne: {'yes_answer': N_pos if values['yes_answer'] > N_pos else values['yes_answer'], 'no_answer': M_neg if values['no_answer'] > M_neg else values['no_answer']} for ne, values in ne_list.items()}
+                # if N_pos == -1 use all positive examples for a NE and corresponding number of negative samples
+                if N_pos == -1 and M_neg == -1:
+                    ne_list = {ne: {'yes_answer': values['yes_answer'],
+                                    'no_answer': values['yes_answer'] if values['no_answer'] > values['yes_answer'] else values['no_answer']} for
+                               ne, values in ne_list.items()}
+                    if split == 'validation':
+                        ne_list = {ne: {'yes_answer': math.ceil(values['yes_answer']/4.0),
+                                        'no_answer': math.ceil(values['no_answer']/4.0)} for ne, values in ne_list.items()}
+                else:
+                    # if validation use 1/4 samples per NE
+                    if split == 'validation':
+                        N_pos = math.ceil(N_pos/4.0)
+                        M_neg = math.ceil(M_neg/4.0)
+                    ne_list = {ne: {'yes_answer': N_pos if values['yes_answer'] > N_pos else values['yes_answer'], 'no_answer': M_neg if values['no_answer'] > M_neg else values['no_answer']} for ne, values in ne_list.items()}
+
+                print(f"{split} statistics: ")
+                for ne, values in ne_list.items():
+                    print(f"NE: {ne}")
+                    print(values)
 
                 for sample in self.dataset_dict_SLIMER[split]:
                     has_answer = 'yes_answer'
