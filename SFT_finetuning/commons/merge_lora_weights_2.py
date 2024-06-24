@@ -56,7 +56,8 @@ if __name__ == "__main__":
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    base_model = "meta-llama/Llama-2-7b-chat-hf"
+    #base_model = "meta-llama/Llama-2-7b-chat-hf"
+    base_model = "sag-uniroma2/extremITA-Camoscio-7b"
     # as it is the code requires namespace/model_name format only, no more subfolders
 
     parser = argparse.ArgumentParser(description='''Llama merger parser''')

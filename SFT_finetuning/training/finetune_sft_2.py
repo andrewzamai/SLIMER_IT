@@ -347,8 +347,7 @@ if __name__ == "__main__":
 
     # with_guidelines, number_NEs, number_pos_samples_per_NE, number_neg_samples_per_NE
     # use number_NEs=-1 to use all tags
-    parser = argparse.ArgumentParser(
-        description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
+    parser = argparse.ArgumentParser(description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
     # adding arguments
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
@@ -386,7 +385,8 @@ if __name__ == "__main__":
             dataset.to_json(f"./datasets/KIND/SLIMER/{dataset_name}/{split_name}.jsonl")
 
     # now loading training config from yml and overriding some variables like dataset name and output_dir
-    path_to_training_config = './src/SFT_finetuning/training_config/llama2_4_NER_XDef_NsamplesPerNE.yml'
+    #path_to_training_config = './src/SFT_finetuning/training_config/llama2_4_NER_XDef_NsamplesPerNE.yml'
+    path_to_training_config = './src/SFT_finetuning/training_config/camoscio_4_NER_XDef_NsamplesPerNE.yml'
     with open(path_to_training_config, 'rb') as f:
         configs = yaml.safe_load(f.read())
 

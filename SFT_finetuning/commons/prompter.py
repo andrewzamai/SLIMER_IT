@@ -66,7 +66,7 @@ if __name__ == '__main__':
     data = load_dataset("json", data_files=path_to_dataset)
 
     sample = data['train'][1]
-    prompt = Prompter("llama3_italian", template_path="../templates").generate_prompt(
+    prompt = Prompter("camoscio_italian", template_path="../templates").generate_prompt(
         instruction=sample['instruction'],
         input=sample['input'],
         label=sample['output'])
