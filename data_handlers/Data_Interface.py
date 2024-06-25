@@ -35,6 +35,7 @@ class Data_Interface(ABC):
         :param path_to_DeG: optional path to json with Def & Guidelines for each NE, if not provided SLIMER w/o D&G instantiated
         """
         self.path_to_BIO = path_to_BIO
+        self.path_to_templates = path_to_templates
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO, test_only)
         self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
@@ -326,3 +327,31 @@ class Data_Interface(ABC):
         print(not_enough_sentences)
 
         return sentences_per_ne_type
+
+    """ ---------- additional functions to act as interface to other SOTA approaches ---------- """
+
+    def convert_dataset_for_ExtremITLLaMA(self):
+        """
+        convert Dataset from BIO to ExtremITLLaMA format
+        with features: id, input, instruction and output a dict with gold answers spans per NE
+        """
+        dataset_dict_extremeIT = {split: [] for split in self.datasetdict_BIO.keys()}
+
+        from src.SLIMER_Prompter import ExtremeITLLaMA_Prompter
+        extremeITLLaMA_Prompter = ExtremeITLLaMA_Prompter("ExtremITA_NERMuD_instruction_it", self.path_to_templates)
+
+        for split_name, dataset_BIO in self.datasetdict_BIO.items():
+            for sample_BIO in dataset_BIO:
+                sample_gold_spans_per_ne = self.extract_gold_spans_per_ne_category(sample_BIO)
+
+                instruction = extremeITLLaMA_Prompter.generate_prompt(map_to_extended_tags=self.get_map_to_extended_NE_name())
+
+                dataset_dict_extremeIT[split_name].append(
+                    {"id": sample_BIO['id'],
+                     "input": ' '.join(sample_BIO['tokens']),
+                     "instruction": instruction,
+                     "output": sample_gold_spans_per_ne
+                     })
+
+        return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_extremeIT.items()})
+
