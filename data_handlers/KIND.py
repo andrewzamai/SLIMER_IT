@@ -85,8 +85,9 @@ if __name__ == '__main__':
     dataset_KIND_manager = KIND(path_to_BIO,
                                 path_to_templates='../templates',
                                 SLIMER_prompter_name='SLIMER_instruction_it',
-                                path_to_DeG='../def_and_guidelines/KIND.json',
+                                path_to_DeG='',
                                 test_only=False)
+    #path_to_DeG='../def_and_guidelines/KIND.json',
 
     # statistics from BIO dataset
     dataset_statistics = dataset_KIND_manager.get_dataset_statistics()
@@ -95,19 +96,19 @@ if __name__ == '__main__':
     dataset_dict_BIO = dataset_KIND_manager.datasetdict_BIO
 
     print(dataset_dict_BIO.keys())
-    print(dataset_dict_BIO['test'][0:10])
+    print(dataset_dict_BIO['train'][0:10])
 
     ne_categories = dataset_KIND_manager.get_ne_categories()
     print(ne_categories)
 
-    sample_BIO_list = Dataset.from_dict(dataset_dict_BIO['test'][0:10])
+    sample_BIO_list = Dataset.from_dict(dataset_dict_BIO['train'][0:10])
     for sample_BIO in sample_BIO_list:
         print(sample_BIO['tokens'])
         print(sample_BIO['labels'])
         sample_w_gold_spans = dataset_KIND_manager.extract_gold_spans_per_ne_category(sample_BIO)
         print(sample_w_gold_spans)
 
-    dataset_dict_SLIMER = dataset_KIND_manager.convert_dataset_for_SLIMER()
+    dataset_dict_SLIMER = dataset_KIND_manager.get_Npos_Mneg_per_topXtags(N_pos=-1, M_neg=-1)
     for split_name, dataset in dataset_dict_SLIMER.items():
         dataset.to_json(f'../../datasets/KIND/SLIMER/{split_name}.jsonl')
 

@@ -350,8 +350,10 @@ class Data_Interface(ABC):
                     {"id": sample_BIO['id'],
                      "input": ' '.join(sample_BIO['tokens']),
                      "instruction": instruction,
-                     "output": sample_gold_spans_per_ne
+                     "output": json.dumps(sample_gold_spans_per_ne)
                      })
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_extremeIT.items()})
+
+
 

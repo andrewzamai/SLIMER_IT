@@ -89,10 +89,12 @@ if __name__ == '__main__':
 
     tokenizer = vllm_model.get_tokenizer()
 
-    #sampling_params = SamplingParams(temperature=0, max_tokens=max_new_tokens, stop=['</s>'])
-    #sampling_params = SamplingParams(temperature=0.2, top_p=0.75)
+    sampling_params = SamplingParams(temperature=0, max_tokens=max_new_tokens, stop=['</s>'])
+    #sampling_params = SamplingParams(temperature=0.2, top_p=0.75, max_tokens=max_new_tokens, stop=['</s>'])
 
     # beam search generation
+
+    """
     sampling_params = SamplingParams(
         n=1,  # number of output sequences to return for the given prompt,
         best_of=4,  # from these `best_of` sequences, the top `n` are returned, treated as the beam width when `use_beam_search` is True
@@ -100,8 +102,11 @@ if __name__ == '__main__':
         early_stopping='never',  # stopping condition for beam search
         temperature=0,
         top_p=1,
-        top_k=-1
+        top_k=-1,
+        max_tokens=max_new_tokens,
+        stop=['</s>']
     )
+    """
 
     print(sampling_params)
 
@@ -151,10 +156,10 @@ if __name__ == '__main__':
                 preds_to_save.append({
                     'id': sample['id'],
                     'gold_answers': all_gold_answers[i],
-                    'pred_answers': all_pred_answers[i]
+                    'pred_answers': json.dumps(all_pred_answers[i])
                 })
 
-            path_to_save_predictions = os.path.join("./predictions", model_path_or_name.split('/')[-1])
+            path_to_save_predictions = os.path.join("./predictions", model_path_or_name.split('/')[-1] + '_T0')
             if not os.path.exists(path_to_save_predictions):
                 os.makedirs(path_to_save_predictions)
             with open(os.path.join(path_to_save_predictions, subdataset_name + '.json'), 'w', encoding='utf-8') as f:

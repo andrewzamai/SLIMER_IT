@@ -120,8 +120,6 @@ if __name__ == '__main__':
 
     print(sampling_params)
 
-
-
     for data in to_eval_on:
 
         for subdataset_name in data['subdataset_names']:

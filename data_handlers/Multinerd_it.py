@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     Multinerd_it_manager = Multinerd_it(path_to_BIO,
                                         path_to_templates='../templates/',
-                                        SLIMER_prompter_name='SLIMER_instruction_it')
+                                        SLIMER_prompter_name='SLIMER_instruction_it', test_only=True)
                                         #path_to_DeG='../def_and_guidelines/Multinerd_it.json')
 
     dataset_statistics = Multinerd_it_manager.get_dataset_statistics()
@@ -70,14 +70,18 @@ if __name__ == '__main__':
     dataset_dict_BIO = Multinerd_it_manager.datasetdict_BIO
 
     print(dataset_dict_BIO.keys())
-    print(dataset_dict_BIO['train'][0:10])
+    print(dataset_dict_BIO['test'][0:10])
 
     ne_categories = Multinerd_it_manager.get_ne_categories()
     print(ne_categories)
 
-    sample_BIO = dataset_dict_BIO['train'][0]
+    sample_BIO = dataset_dict_BIO['test'][0]
     sample_w_gold_spans = Multinerd_it_manager.extract_gold_spans_per_ne_category(sample_BIO)
     print(sample_w_gold_spans)
+
+    extremITLLaMA_test = Multinerd_it_manager.convert_dataset_for_ExtremITLLaMA()['test']
+    print(extremITLLaMA_test)
+    print(extremITLLaMA_test[0])
 
     dataset_dict_SLIMER = Multinerd_it_manager.dataset_dict_SLIMER
     for split_name, dataset in dataset_dict_SLIMER.items():
@@ -86,5 +90,7 @@ if __name__ == '__main__':
     sentences_per_ne_type = Multinerd_it_manager.get_n_sentences_per_ne_type(n_sentences_per_ne=3)
     #with open("../../datasets/multinerd/SLIMER/sentences_per_ne_type.json", 'w') as f:
     #   json.dump(sentences_per_ne_type, f, indent=2)
+
+
 
 
