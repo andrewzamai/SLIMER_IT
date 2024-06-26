@@ -80,6 +80,7 @@ class KIND(Data_Interface):
 
 if __name__ == '__main__':
 
+    """
     path_to_BIO = '../../datasets/KIND/evalita-2023'
 
     dataset_KIND_manager = KIND(path_to_BIO,
@@ -110,6 +111,68 @@ if __name__ == '__main__':
 
     dataset_dict_SLIMER = dataset_KIND_manager.get_Npos_Mneg_per_topXtags(N_pos=-1, M_neg=-1)
     for split_name, dataset in dataset_dict_SLIMER.items():
-        dataset.to_json(f'../../datasets/KIND/SLIMER/{split_name}.jsonl')
+        dataset.to_json(f'../../datasets/KIND/SLIMER/{split_name}.json')
+
+    
+    split = 'train'
+    kind_SLIMER = load_dataset("json", data_files=f'../../datasets/KIND/SLIMER/{split}.json')['train']
+    print(kind_SLIMER)
+
+    unique_ids = set([int(x['doc_tag_pairID'].split(':')[2]) for x in kind_SLIMER])
+    print(sorted(unique_ids))
+    print(len(unique_ids))
+
+    #with open(os.path.join('../../datasets/KIND/evalita-2023', f'WN_{split}.tsv'), 'r', encoding='utf-8') as file:
+        #lines = file.read()
+
+    #print(lines.split('\n\n'))
+    """
+
+    def process_file(input_file, output_file, entity_mapping):
+        """
+        Function to read a file with labeled entities (PER, LOC, ORG),
+        replace them with values from a provided dictionary mapping,
+        and save the modified content back into a TSV file.
+
+        Args:
+        - input_file (str): Path to the input file.
+        - output_file (str): Path to the output TSV file.
+        - entity_mapping (dict): Dictionary mapping entities to new values.
+
+        Returns:
+        - None
+        """
+        with open(input_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+
+        modified_lines = []
+        for line in lines:
+            if line.strip():  # Check if the line is not empty
+                parts = line.split('\t')
+                if len(parts) == 2:  # Assuming each line is "entity<TAB>label\n"
+                    entity = parts[1].strip()
+                    if entity != 'O':
+                        prefix, entity = entity.split('-')# Extract the entity (e.g., "PER", "LOC", "ORG")
+                        entity = entity_mapping[entity]  # Replace with the mapped value
+                        parts[1] = prefix + '-' + entity
+                    else:
+                        parts[1] = entity
+                    modified_lines.append('\t'.join(parts).strip() + '\n')
+            else:
+                modified_lines.append('\n')
+
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.writelines(modified_lines)
+
+
+    map_tag_to_extended_name = {
+        'PER': 'persona',
+        'LOC': 'luogo',
+        'ORG': 'organizzazione'
+    }
+
+    process_file('../../datasets/KIND/evalita-2023/WN_test.tsv', '../../datasets/KIND/GNER/WN/test.txt', map_tag_to_extended_name)
+
+
 
 
