@@ -62,11 +62,11 @@ if __name__ == '__main__':
 
     #from src.data_handlers.KIND import KIND
     from datasets import load_dataset
-    path_to_dataset = "../../../datasets/KIND/SLIMER/train.jsonl"
+    path_to_dataset = "../../../datasets/KIND/SLIMER/train.json"
     data = load_dataset("json", data_files=path_to_dataset)
 
     sample = data['train'][1]
-    prompt = Prompter("camoscio_italian", template_path="../templates").generate_prompt(
+    prompt = Prompter("modello-italia", template_path="../templates").generate_prompt(
         instruction=sample['instruction'],
         input=sample['input'],
         label=sample['output'])

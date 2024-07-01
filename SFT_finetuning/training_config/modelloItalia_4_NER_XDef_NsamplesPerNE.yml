@@ -1,0 +1,42 @@
+# fine-tuning modello-italia-9b
+
+base_model: sapienzanlp/modello-italia-9b-bf16
+prompt_template_name: modello-italia
+# datasets (instruction, input, output) columns
+data_path: None
+val_data_path: None
+select_train_portion: -1
+val_set_size: -1  # if -1 use all validation data
+output_dir: None
+early_stopping_patience: 5
+#training hyperparams
+batch_size: 32
+micro_batch_size: 1
+num_epochs: 10
+learning_rate: 3.0e-4
+cutoff_len: 768
+
+warmup_steps: 60
+eval_steps: 20
+logging_steps: 5
+max_grad_norm: 1.0
+#lora hyperparams
+use_lora: True
+lora_alpha: 16
+lora_dropout: 0.05
+lora_r: 8
+lora_target_modules:
+- query_key_value
+- xxx
+#llm hyperparams
+# NTP loss only on Response
+train_on_inputs: False
+group_by_length: True
+#quant params
+load_8bit: False
+load_4bit: True
+#general param
+save_total_limit: 2
+use_flash_attention: False
+shuffle: True
+gradient_checkpointing: False

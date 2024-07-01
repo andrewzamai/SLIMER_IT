@@ -171,7 +171,7 @@ if __name__ == '__main__':
         'ORG': 'organizzazione'
     }
 
-    process_file('../../datasets/KIND/evalita-2023/WN_test.tsv', '../../datasets/KIND/GNER/WN/test.txt', map_tag_to_extended_name)
+    process_file('../../datasets/KIND/evalita-2023/FIC_test.tsv', '../../datasets/KIND/GNER/FIC/test.txt', map_tag_to_extended_name)
 
 
 

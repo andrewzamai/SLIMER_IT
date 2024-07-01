@@ -12,7 +12,6 @@ import argparse
 from huggingface_hub import login
 from .initialization import get_HF_access_token, init_model
 
-
 def merge_main(
     base_model: str = "meta-llama/Llama-2-7b-chat-hf",
     lora_weights: str = "./saved_models/lora_weights_model",
@@ -56,12 +55,11 @@ if __name__ == "__main__":
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    #base_model = "meta-llama/Llama-2-7b-hf"
-    base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
-    #base_model = "sag-uniroma2/extremITA-Camoscio-7b"
+    base_model = "sapienzanlp/modello-italia-9b"
     # as it is the code requires namespace/model_name format only, no more subfolders
+    print(f"Base model for merging: {base_model}")
 
-    parser = argparse.ArgumentParser(description='''Llama merger parser''')
+    parser = argparse.ArgumentParser(description='''Llama3 merger parser''')
     # adding arguments
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
@@ -69,10 +67,8 @@ if __name__ == "__main__":
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
-    #path_to_lora = "sag-uniroma2/extremITA-Camoscio-7b-adapters"
-    path_to_lora = "./trained_models/GNER-IT-ANITA"
-    #save_model_at = "./hf_cache_dir/ExtremITLLaMA"
-    save_model_at = "./merged_models/GNER-IT-ANITA"
+    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
 
     merge_main(base_model, path_to_lora, save_model_at)
 
