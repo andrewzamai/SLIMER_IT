@@ -1,9 +1,16 @@
 import torch
-import transformers as tr
+from transformers import AutoTokenizer
+
+from src.SFT_finetuning.commons import initialization
+
+from huggingface_hub import login
+
+HF_ACCESS_TOKEN = initialization.get_HF_access_token('../../.env')
+login(token=HF_ACCESS_TOKEN)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-tokenizer = tr.AutoTokenizer.from_pretrained("sapienzanlp/modello-italia-9b")
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-9b-it")
 #tokenizer = tr.AutoTokenizer.from_pretrained("swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA")
 
 MY_SYSTEM_PROMPT_SHORT = (
@@ -11,8 +18,8 @@ MY_SYSTEM_PROMPT_SHORT = (
 )
 prompt = "Ciao, chi sei?"
 messages = [
-  {"role": "system", "content": MY_SYSTEM_PROMPT_SHORT},
   {"role": "user", "content": prompt},
+  {"role": "assistant", "content": MY_SYSTEM_PROMPT_SHORT},
 ]
 tokenized_chat = tokenizer.apply_chat_template(
   messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"

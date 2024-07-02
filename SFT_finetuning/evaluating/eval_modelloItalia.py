@@ -87,7 +87,7 @@ if __name__ == '__main__':
     partial_evaluate = False
     print(f"\npartial_evaluate: {partial_evaluate}")
 
-    base_model = "sapienzanlp/modello-italia-9b"
+    base_model = "sapienzanlp/modello-italia-9b-bf16"
 
     #prompter = Prompter('llama2_italian', template_path='./src/SFT_finetuning/templates', eos_text='')
     prompter = Prompter('modello-italia', template_path='./src/SFT_finetuning/templates', eos_text='')

@@ -57,13 +57,13 @@ class Multinerd_it(Data_Interface):
 
 if __name__ == '__main__':
 
-    """
+
     path_to_BIO = '../../datasets/Multinerd_it'
 
     Multinerd_it_manager = Multinerd_it(path_to_BIO,
                                         path_to_templates='../templates/',
-                                        SLIMER_prompter_name='SLIMER_instruction_it', test_only=True)
-                                        #path_to_DeG='../def_and_guidelines/Multinerd_it.json')
+                                        SLIMER_prompter_name='SLIMER_instruction_it', test_only=True,
+                                        path_to_DeG='../def_and_guidelines/Multinerd_it.json')
 
     dataset_statistics = Multinerd_it_manager.get_dataset_statistics()
     print(dataset_statistics)
@@ -88,26 +88,14 @@ if __name__ == '__main__':
     for split_name, dataset in dataset_dict_SLIMER.items():
         dataset.to_json(f'../../datasets/Multinerd_it/SLIMER/{split_name}.jsonl')
 
-    sentences_per_ne_type = Multinerd_it_manager.get_n_sentences_per_ne_type(n_sentences_per_ne=3)
+    #sentences_per_ne_type = Multinerd_it_manager.get_n_sentences_per_ne_type(n_sentences_per_ne=3)
     #with open("../../datasets/multinerd/SLIMER/sentences_per_ne_type.json", 'w') as f:
     #   json.dump(sentences_per_ne_type, f, indent=2)
+
     """
 
-
     def process_file(input_file, output_file, entity_mapping):
-        """
-        Function to read a file with labeled entities (PER, LOC, ORG),
-        replace them with values from a provided dictionary mapping,
-        and save the modified content back into a TSV file.
-
-        Args:
-        - input_file (str): Path to the input file.
-        - output_file (str): Path to the output TSV file.
-        - entity_mapping (dict): Dictionary mapping entities to new values.
-
-        Returns:
-        - None
-        """
+       
         with open(input_file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
 
@@ -159,3 +147,4 @@ if __name__ == '__main__':
         for value in map_tag_to_extended_name.values():
             f.write(value + '\n')
 
+    """

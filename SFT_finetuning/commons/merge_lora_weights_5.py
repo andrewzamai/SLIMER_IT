@@ -55,7 +55,7 @@ if __name__ == "__main__":
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    base_model = "sapienzanlp/modello-italia-9b"
+    base_model = "sapienzanlp/modello-italia-9b-bf16"
     # as it is the code requires namespace/model_name format only, no more subfolders
     print(f"Base model for merging: {base_model}")
 

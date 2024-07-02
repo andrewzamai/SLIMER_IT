@@ -62,17 +62,20 @@ if __name__ == '__main__':
 
     #from src.data_handlers.KIND import KIND
     from datasets import load_dataset
-    path_to_dataset = "../../../datasets/KIND/SLIMER/train.json"
+    path_to_dataset = "../../../datasets/Multinerd_it/SLIMER/test.jsonl"
     data = load_dataset("json", data_files=path_to_dataset)
 
-    sample = data['train'][1]
-    prompt = Prompter("modello-italia", template_path="../templates").generate_prompt(
-        instruction=sample['instruction'],
-        input=sample['input'],
-        label=sample['output'])
+    samples = data['train']
+    for sample in samples:
+        if sample['tagName'] == 'MYTH':
+            prompt = Prompter("llama3_italian", template_path="../templates").generate_prompt(
+                instruction=sample['instruction'],
+                input=sample['input'],
+                label=sample['output'])
 
-    #print(json.dumps(prompt))
-    print(prompt)
+            #print(json.dumps(prompt))
+            print(prompt)
+            break
 
     """
     from transformers import AutoTokenizer

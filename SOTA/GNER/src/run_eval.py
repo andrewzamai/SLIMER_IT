@@ -16,7 +16,7 @@ if __name__ == '__main__':
     #tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
     tokenizer = AutoTokenizer.from_pretrained("swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA")
 
-    test_name = 'FIC'
+    test_name = 'MultinerdIT'
     # test datasets with predictions
     test_set = load_dataset("json", data_files=f'../data/GNER-IT-vllm/{test_name}.jsonl')['train']
     print(test_set)
@@ -32,8 +32,8 @@ if __name__ == '__main__':
     """ 3) compute scores """
     n_correct, n_pos_gold, n_pos_pred = 0, 0, 0
     scores_per_NE = {ne: {"n_correct": 0, "n_pos_gold": 0, "n_pos_pred": 0} for ne in ne_types_list}
-    #exclude_this_nes = ['persona', 'organizzazione', 'luogo']
-    exclude_this_nes = []
+    exclude_this_nes = ['persona', 'organizzazione', 'luogo', 'entità biologica']
+    #exclude_this_nes = []
     exc = [scores_per_NE.pop(ne) for ne in exclude_this_nes]
 
     for sample in test_set:
