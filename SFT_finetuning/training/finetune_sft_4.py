@@ -396,7 +396,7 @@ if __name__ == "__main__":
     configs['val_data_path'] = f"./datasets/KIND/SLIMER/{dataset_name}/validation.jsonl"
 
     configs[
-        'output_dir'] = f"./trained_models/{base_model_name}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+        'output_dir'] = f"./trained_models/{base_model_name}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
 
     train(**configs)
 

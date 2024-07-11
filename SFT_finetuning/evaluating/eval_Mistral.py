@@ -87,7 +87,7 @@ if __name__ == '__main__':
     partial_evaluate = False
     print(f"\npartial_evaluate: {partial_evaluate}")
 
-    model_path_or_name = f"./merged_models/Mistral-7B-Instruct-v0.2_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    model_path_or_name = f"./merged_models/Mistral-7B-Instruct-v0.2_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
     print(f"LLM model: {model_path_or_name}")
 
     max_new_tokens = 128

@@ -69,8 +69,8 @@ if __name__ == "__main__":
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
-    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
-    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
+    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
 
     merge_main(base_model, path_to_lora, save_model_at)
 

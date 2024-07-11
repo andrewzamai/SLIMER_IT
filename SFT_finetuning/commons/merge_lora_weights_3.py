@@ -49,14 +49,15 @@ def merge_main(
 
 if __name__ == "__main__":
 
+
     print("Merged Began")
     sys.stdout.flush()
 
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    #base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
-    base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
+    #base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
     #base_model = "meta-llama/Meta-Llama-3-8B"
     # as it is the code requires namespace/model_name format only, no more subfolders
     print(f"Base model for merging: {base_model}")
@@ -69,18 +70,23 @@ if __name__ == "__main__":
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
-    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
-    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
+    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
 
-    merge_main(base_model, path_to_lora, save_model_at)
+    #merge_main(base_model, path_to_lora, save_model_at)
+
 
     """ PUSH TO HF HUB """
 
     """
-    from huggingface_hub import create_repo, upload_folder
-    from SFT_finetuning.commons.initialization import get_HF_access_token
 
-    new_repo_name = f"andrewzamai/{save_model_at.split('/')[-1]}"
+    from huggingface_hub import create_repo, upload_folder
+    from src.SFT_finetuning.commons.initialization import get_HF_access_token
+
+    HF_ACCESS_TOKEN = get_HF_access_token('./.env')
+    login(token=HF_ACCESS_TOKEN)
+
+    new_repo_name = f"expertai/SLIMER-IT"
 
     url_new_repo_name = create_repo(
         repo_id=new_repo_name,

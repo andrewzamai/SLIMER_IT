@@ -248,7 +248,7 @@ def main():
 
         test_set = Dataset.from_list(test_set)
 
-        test_set.to_json(f'./predictions/GNER-IT-vllm/{test_name}.jsonl')
+        test_set.to_json(f'./predictions/GNER-EN-vllm/{test_name}.jsonl')
 
 
 if __name__ == "__main__":

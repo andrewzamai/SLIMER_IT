@@ -31,7 +31,7 @@ class KIND(Data_Interface):
             # train only on WN subdataset to have ADG/FIC Out-Of-Domain
             if split_name in ['train', 'validation'] and test_only:
                 pass
-            elif split_name == 'train' and ds_name in ['FIC', 'ADG']:
+            elif split_name in ['train', 'validation'] and ds_name in ['FIC', 'ADG']:
                 pass
             else:
                 ds_content = self.__read_bio_file(os.path.join(path_to_BIO, file_name), ds_name, split_name)
@@ -80,8 +80,13 @@ class KIND(Data_Interface):
 
 if __name__ == '__main__':
 
-    """
     path_to_BIO = '../../datasets/KIND/evalita-2023'
+    dataset_KIND_manager = KIND(path_to_BIO)
+    print(dataset_KIND_manager.datasetdict_BIO)
+    print(dataset_KIND_manager.datasetdict_BIO['test']['id'])
+    quit()
+
+    """
 
     dataset_KIND_manager = KIND(path_to_BIO,
                                 path_to_templates='../templates',

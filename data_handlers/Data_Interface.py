@@ -25,7 +25,7 @@ from src.SLIMER_Prompter import SLIMER_Prompter
 
 class Data_Interface(ABC):
 
-    def __init__(self, path_to_BIO, path_to_templates, SLIMER_prompter_name, path_to_DeG: Union[None, str] = None, test_only=False):
+    def __init__(self, path_to_BIO, path_to_templates: Union[None, str] = None, SLIMER_prompter_name: Union[None, str] = None, path_to_DeG: Union[None, str] = None, test_only=False):
         """
         Instantiate a NER dataset for SLIMER w/ D&G if provided path to json.
 
@@ -38,9 +38,9 @@ class Data_Interface(ABC):
         self.path_to_templates = path_to_templates
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO, test_only)
         self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
-        self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates)
+        self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates) if path_to_templates else None
         self.path_to_DeG = path_to_DeG
-        self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER()
+        self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER() if self.slimer_prompter else None
 
     @abstractmethod
     def load_datasetdict_BIO(self, path_to_BIO, test_only=False):

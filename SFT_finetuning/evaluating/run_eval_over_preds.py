@@ -8,12 +8,15 @@ from src.SFT_finetuning.evaluating import uniNER_official_eval_script
 if __name__ == '__main__':
 
     dataset_name = "it"
-    w_def = False
-    model_name = "extremITA-Camoscio-7b"
-    with open(os.path.join(f'../../../exp_outputs/predictions/{model_name}_-1pos_-1neg_perNE_top-1NEs_{w_def}Def-IT', f'{dataset_name}.json')) as fp:
+    w_def = True
+    #model_name = "LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
+    #model_name = ""
+    #with open(os.path.join(f'../../../exp_outputs/predictions/{model_name}_-1pos_-1neg_perNE_top-1NEs_{w_def}Def-IT2', f'{dataset_name}.json')) as fp:
+    with open(os.path.join(f'../../../exp_outputs/predictions/SLIMER', f'{dataset_name}.json')) as fp:
         data_w_preds = json.load(fp)
 
     exclude_this_nes = ['PER', 'ORG', 'LOC', 'BIO']
+    #exclude_this_nes = []
 
     all_pred_answers = []
     all_gold_answers = []
