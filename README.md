@@ -19,7 +19,7 @@ Designed to work on:
 &nbsp;&nbsp;&nbsp;&nbsp;✅ Never-Seen-Before Named Entities (the model was not trained on that entity type? It will tag it anyway!)
 
 <div align="center">
-<img src="assets/SLIMERIT_prompt.png" alt="Alt text" style="max-width: 100%; width: 1000px;">
+<img src="assets/SLIMERIT_prompt.png" alt="Alt text" style="max-width: 100%; width: 275;">
 </div>
 
 
@@ -42,7 +42,7 @@ Best performing SLIMER-IT 👻 implementation leverages on a LLaMA3 model fine-t
 
 
 <div align="center">
-<img src="assets/Off-the-shelf-models-comparison.png" alt="Alt text" style="max-width: 100%; width: 275px;">
+<img src="assets/Off-the-shelf-models-comparison.png" alt="Alt text" style="max-width: 100%; width: 400px;">
 </div>
 
 
