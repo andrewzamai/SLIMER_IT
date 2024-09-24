@@ -10,7 +10,7 @@
     <a href="https://www.expert.ai/"><img src="https://img.shields.io/badge/company-expert.ai-blueviolet"></a>
 </p>
 
-## Instruct your LLM with Definitions and Guidelines for Zero-Shot NER on Italian 🔎 📖
+## Instruct your LLM with Definitions and Guidelines for Zero-Shot NER 🔎 📖
 
 Designed to work on:
 
