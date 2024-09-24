@@ -40,6 +40,12 @@ Best performing SLIMER-IT 👻 implementation leverages on a LLaMA3 model fine-t
 
 [2] https://huggingface.co/DeepMount00/GLiNER_ITA_LARGE
 
+
+<div align="center">
+<img src="assets/Off-the-shelf-models-comparison.png" alt="Alt text" style="max-width: 100%; width: 275px;">
+</div>
+
+
 PROs:
 
 &nbsp;&nbsp;&nbsp;&nbsp;✅ guide your LLM with external knowledge about the NE to tag 
