@@ -4,6 +4,45 @@ import os
 
 if __name__ == '__main__':
 
+    # Data
+    datasets = ['FIC', 'ADG', 'MN']
+    models = ['Universal-NER-ITA', 'GLiNER-ITA-Large', 'GLiNER-ML', 'SLIMER-IT']
+    scores = [
+        [32.4, 43.2, 12.8],  # Universal-NER-ITA
+        [36.6, 42.0, 15.5],  # GLiNER-ITA-Large
+        [46.5, 49.4, 17.4],  # GLiNER-ML
+        [82.5, 81.7, 54.7]  # SLIMER-IT
+    ]
+
+    # Number of bars per dataset
+    n_models = len(models)
+
+    # Set up the x locations for the groups and bar width
+    x = np.arange(len(datasets))
+    width = 0.1  # The width of the bars
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(6, 4))
+    # colors = ['blue', 'red', 'green', 'purple']
+
+
+    # Plot each model's bars, shifting the x location for each model's bar
+    for i, model_scores in enumerate(scores):
+        ax.bar(x + i * width, model_scores, width, label=models[i]) #, color=colors[i])
+
+    # Add some text for labels, title, and custom x-axis tick labels
+    ax.set_xlabel('Datasets')
+    ax.set_ylabel('F1')
+    # ax.set_title('Comparison of Zero-Shot NER Models on Italian Datasets')
+    ax.set_xticks(x + width * (n_models - 1) / 2)
+    ax.set_xticklabels(datasets)
+    ax.legend()
+
+    # Display the plot
+    plt.tight_layout()
+    plt.show()
+    exit()
+
     # Example data: a dictionary of datasets where each dataset contains a dictionary of models and their F1 scores
     f1_scores = {
         'WN (supervised)': {'Camoscio': 81.50, 'LLaMA2': 83.24, 'Mistral': 85.55, 'LLaMA3': 85.38, 'LLaMAntino3': 85.78}, #, 'GNER': 90.3, 'extremITLLaMA': 89.1, 'GLiNER-MultiLingual': 70.6, 'Seq.Lab. RoBERTa': 84.1},
