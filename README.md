@@ -27,7 +27,7 @@ Designed to work on:
 
 Traditional methods approach NER as a token classification problem with narrow domain specialization and predefined label sets. Beyond requiring extensive human annotations for each task, they also face significant challenges in generalizing to out-of-distribution domains and unseen labels.
 
-In contrast, Large Language Models (LLMs) have recently demonstrated strong zero-shot capabilities. Several models have been developed for zero-shot NER, including UniversalNER, GLiNER, GoLLIE, GNER, and SLIMER. Notably, SLIMER has proven particularly effective in handling unseen named entity types by utilizing definitions and guidelines to steer the model generation.
+In contrast, Large Language Models (LLMs) have recently demonstrated strong zero-shot capabilities. Several models have been developed for zero-shot NER, including UniversalNER, GLiNER, GoLLIE, GNER, and SLIMER. Notably, SLIMER has proven particularly effective in handling unseen named entity types by leveraging definitions and guidelines to steer the model generation.
 
 However, little has been done for zero-shot NER in non-English data. To this end, we propose an evaluation framework for Zero-Shot NER, and we apply it to the Italian language. 
 In addition, we fine-tune a version of SLIMER for Italian, which we call SLIMER-IT. 
