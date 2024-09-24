@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>👻 SLIMER-IT 🇮🇹: Show Less Instruct More Entity Recognition</h1>
+  <h1>👻 SLIMER-IT 🇮🇹: Zero-Shot NER on Italian</h1>
 </div>
 
 
