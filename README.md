@@ -24,16 +24,15 @@ Designed to work on:
 
 
 ## 📄 TL;DR
-Existing models primarily focus on addressing zero-shot NER on Out-of-Domain inputs, while fine-tuning on an extensive number of entity classes that often highly or completely overlap with the test sets used in the literature. 
 
-But what happens in everyday use when they encounter entities that were not included in training? 
-As demonstrated on BUSTER, they are likely to significantly underperform 📉, revealing a critical weakness in handling never-seen-before entity types. 🆘
+Traditional methods approach NER as a token classification problem with narrow domain specialization and predefined label sets. Beyond requiring extensive human annotations for each task, they also face significant challenges in generalizing to out-of-distribution domains and unseen labels.
 
-In this work, we propose SLIMER, an approach designed to tackle never-seen-before entity tags by instructing the model on fewer examples from a reduced tag set, and by leveraging a prompt enriched with definition and guidelines.
+In contrast, Large Language Models (LLMs) have recently demonstrated strong zero-shot capabilities. Several models have been developed for zero-shot NER, including UniversalNER, GLiNER, GoLLIE, GNER, and SLIMER. Notably, SLIMER has proven particularly effective in handling unseen named entity types by utilizing definitions and guidelines to steer the model generation.
 
-Experiments demonstrate that definition and guidelines yield to faster, more robust learning, and better performance, particularly when labelling unseen named entities. 
-
-When compared to other existing solutions under similar training conditions, SLIMER demonstrates superior capability in handling unseen entities, delivering more robust performance in real-world applications. 🏆
+However, little has been done for zero-shot NER in non-English data. To this end, we propose an evaluation framework for Zero-Shot NER, and we apply it to the Italian language. 
+In addition, we fine-tune a version of SLIMER for Italian, which we call SLIMER-IT. 
+ 
+Despite being trained only on the PER, LOC, and ORG classes from the news-focused KIND dataset, SLIMER-IT not only outperforms models like GNER and GLiNER trained in similar settings but also surpasses existing off-the-shelf zero-shot NER models based on the GLiNER approach, which were pre-trained on over 13,000 entities covering most known entity types.
 
 PROs:
 
