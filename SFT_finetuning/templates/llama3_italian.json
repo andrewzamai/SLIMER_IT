@@ -1,6 +1,0 @@
-{
-    "description": "Template for LLaMA3 in Italian",
-    "prompt_input": "<|start_header_id|>system<|end_header_id|>\n\n Sei un utile assistente.<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\nTi viene fornito un input di testo (delimitato da tre virgolette) e un'istruzione. \nLeggi il testo e rispondi all'istruzione alla fine.\n\"\"\"\n{input}\n\"\"\"\nIstruzione: {instruction}<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>\n\n",
-    "prompt_no_input": "<|start_header_id|>system<|end_header_id|>\n\n Sei un utile assistente.<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\nIstruzione: {instruction}\n<|start_header_id|>assistant<|end_header_id|>\n\n",
-    "response_split": "<|eot_id|>"
-}

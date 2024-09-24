@@ -1,5 +1,0 @@
-{
-    "description": "SLIMER instruction - Italian",
-    "with_DeG": "Estrai tutte le entità di tipo {ne_tag} dal testo che hai letto. Ti vengono fornite una DEFINIZIONE e alcune LINEE GUIDA.\nDEFINIZIONE: {definition}\nLINEE GUIDA: {guidelines}\nRestituisci una lista JSON di istanze di questo tipo. Restituisci una lista vuota se non sono presenti istanze.",
-    "without_DeG": "Estrai tutte le entità di tipo {ne_tag} dal testo che hai letto.\nRestituisci una lista JSON di istanze di questo tipo. Restituisci una lista vuota se non sono presenti istanze."
-}

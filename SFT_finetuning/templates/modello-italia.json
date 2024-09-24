@@ -1,6 +1,0 @@
-{
-    "description": "Template for modello-italia in Italian",
-    "prompt_input": "<|system|>\nSei un utile assistente.</s>\n<|user|>\nTi viene fornito un input di testo (delimitato da tre virgolette) e un'istruzione. \nLeggi il testo e rispondi all'istruzione alla fine.\n\"\"\"\n{input}\n\"\"\"\nIstruzione: {instruction}</s>\n<|assistant|>\n",
-    "prompt_no_input": "<|system|>\n Sei un utile assistente.</s>\n<|user|>Istruzione: {instruction}</s>\n<|assistant|>\n",
-    "response_split": "</s>"
-}

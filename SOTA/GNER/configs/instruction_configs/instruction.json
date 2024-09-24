@@ -1,3 +1,0 @@
-[
-    "Analizza la frase fornita, identificando il tipo di entità per ogni parola, token per token.\nIl formato dell'output è: parola_1(etichetta_1), parola_2(etichetta_2), ...\nUtilizzeremo il formato BIO per etichettare le entità, dove:\n1. B- (Begin) indica l'inizio di un'entità.\n2. I- (Inside) viene utilizzato per le parole all'interno di un'entità che non sono la prima parola.\n3. O (Outside) indica le parole che non fanno parte di un'entità.\n"
-]

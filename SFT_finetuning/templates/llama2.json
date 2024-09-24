@@ -1,6 +1,0 @@
-{
-    "description": "Template for LLaMA2 in English",
-    "prompt_input": "[INST] You are given a text chunk (delimited by triple quotes) and an instruction.\nRead the text and answer to the instruction in the end.\n\"\"\"\n{input}\n\"\"\"\nInstruction: {instruction}\n[/INST]\n",
-    "prompt_no_input": "[INST] You are given an instruction.\nAnswer to the instruction.\nInstruction: {instruction}\n[/INST]\n",
-    "response_split": "[/INST]"
-}

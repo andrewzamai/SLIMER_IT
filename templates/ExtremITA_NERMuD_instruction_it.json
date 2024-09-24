@@ -1,4 +1,0 @@
-{
-    "description": "ExtremeITA LLaMA instruction for NERMud - Italian",
-    "instruction": "Scrivi le menzioni di entità nel testo, indicandone il tipo: {list_of_tags}."
-}
