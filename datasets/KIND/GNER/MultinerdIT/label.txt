@@ -1,0 +1,15 @@
+persona
+organizzazione
+luogo
+animale
+entità biologica
+corpo celeste
+malattia
+evento
+cibo
+strumento
+media
+entità mitologica
+pianta
+tempo
+veicolo

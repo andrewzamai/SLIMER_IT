@@ -1,0 +1,17 @@
+{
+    "PER": "persona",
+    "ORG": "organizzazione",
+    "LOC": "luogo",
+    "ANIM": "animale",
+    "BIO": "entità biologica",
+    "CEL": "corpo celeste",
+    "DIS": "malattia",
+    "EVE": "evento",
+    "FOOD": "cibo",
+    "INST": "strumento",
+    "MEDIA": "media",
+    "MYTH": "entità mitologica",
+    "PLANT": "pianta",
+    "TIME": "tempo",
+    "VEHI": "veicolo"
+}

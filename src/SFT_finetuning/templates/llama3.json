@@ -1,0 +1,6 @@
+{
+    "description": "LLama3 Instruct Template",
+    "prompt_input": "<|start_header_id|>system<|end_header_id|>\n\nYou are an helpful assistant.<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\nYou are given a text chunk (delimited by triple quotes) and an instruction.\nRead the text and answer to the instruction in the end.\n\"\"\"\n{input}\n\"\"\"\nInstruction: {instruction}<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>\n\n",
+    "prompt_no_input": "<|start_header_id|>system<|end_header_id|>\n\n You are an helpful assistant.<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\nInstruction: {instruction}\n<|start_header_id|>assistant<|end_header_id|>\n\n",
+    "response_split": "<|eot_id|>"
+}

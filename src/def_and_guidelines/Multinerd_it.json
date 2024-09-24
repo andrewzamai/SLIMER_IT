@@ -1,0 +1,435 @@
+[
+  {
+    "ne_tag": "ANIM",
+    "real_name": "animale",
+    "sentences_as_example": [
+      {
+        "frase": "Tra i mammiferi , \u00e8 presente il rinolofo euriale ( \" Rhinolophus euryale \" ) , un chirottero .",
+        "entit\u00e0": [
+          "Rhinolophus euryale"
+        ]
+      },
+      {
+        "frase": "Il fiume in queste zone ospita una grande popolazioni di ippopotami .",
+        "entit\u00e0": [
+          "ippopotami"
+        ]
+      },
+      {
+        "frase": "Tra le specie maggiormente predate i primati di piccola taglia come il Lori lento .",
+        "entit\u00e0": [
+          "Lori lento"
+        ]
+      }
+    ],
+    "prompt_length": 613,
+    "output_length": 209,
+    "gpt_DeG": "{\"Definition\": \"'animale' si riferisce a entit\u00e0 viventi appartenenti al regno animale, compresi mammiferi, rettili, uccelli, pesci, insetti e altre forme di vita animale.\", \"Guidelines\": \"Quando identifichi entit\u00e0 'animali', assicurati di escludere nomi di persone o personaggi fittizi che potrebbero essere simili a nomi di animali. Ad esempio, 'Peter Rabbit' potrebbe essere confuso con un animale, ma si tratta di un personaggio letterario. Inoltre, fai attenzione a distinguere tra nomi comuni e nomi scientifici in quanto alcuni potrebbero corrispondere a termini non riferiti ad animali. Ad esempio, 'Europa' potrebbe riferirsi al continente o ad una luna di Giove, non a un animale.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "BIO",
+    "real_name": "entit\u00e0 biologica",
+    "sentences_as_example": [
+      {
+        "frase": "Le macchie nere sulle foglie sono causate dal Colletotrichum .",
+        "entit\u00e0": [
+          "Colletotrichum"
+        ]
+      },
+      {
+        "frase": "Un piccolo numero di lieviti come la \" Candida albicans \", pu\u00f2 causare infezioni nell'uomo.",
+        "entit\u00e0": [
+          "Candida albicans"
+        ]
+      },
+      {
+        "frase": "Il genere \u00e8 stato introdotto nel 1998 come \" genere dei virus che somigliano al virus Ebola \" .",
+        "entit\u00e0": [
+          "virus Ebola"
+        ]
+      }
+    ],
+    "prompt_length": 609,
+    "output_length": 233,
+    "gpt_DeG": "{\"Definition\": \"'entit\u00e0 biologica' si riferisce a nomi di organismi biologici, compresi batteri, funghi, virus, parassiti, piante, animali e altri organismi viventi.\", \"Guidelines\": \"Assicurati di etichettare solo nomi di organismi biologici concreti e specifici, escludendo termini generici che non si riferiscono a un singolo organismo. Ad esempio, 'batteri' \u00e8 un termine generico e non dovrebbe essere etichettato come 'entit\u00e0 biologica', mentre 'E. coli' \u00e8 un organismo specifico e dovrebbe essere etichettato come tale. Fai attenzione alle ambiguit\u00e0.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "CEL",
+    "real_name": "corpo celeste",
+    "sentences_as_example": [
+      {
+        "frase": "Questa \u00e8 una lista degli \" anelli di Urano \" a cui \u00e8 stato dato un nome .",
+        "entit\u00e0": [
+          "anelli di Urano"
+        ]
+      },
+      {
+        "frase": "\" NGC 5746 \" \u00e8 una galassia a spirale barrata della costellazione della Vergine .",
+        "entit\u00e0": [
+          "NGC 5746",
+          "costellazione della Vergine",
+          "galassia a spirale barrata"
+        ]
+      },
+      {
+        "frase": "Il Sole entra nel segno astrologico della Vergine alle ore 02:36 .",
+        "entit\u00e0": [
+          "Vergine",
+          "Sole"
+        ]
+      }
+    ],
+    "prompt_length": 622,
+    "output_length": 198,
+    "gpt_DeG": "{\"Definition\": \"'corpo celeste' si riferisce a oggetti astronomici come pianeti, stelle, satelliti, costellazioni, galassie, comete e asteroidi.\", \"Guidelines\": \"Evita di etichettare come 'corpo celeste' entit\u00e0 non direttamente collegate al campo dell'astronomia. Ad esempio, 'Vergine' potrebbe riferirsi anche a un segno astrologico, quindi il contesto \u00e8 importante. Assicurati di non includere nomi di fenomeni non astronomici come 'alba' o 'tramonto'. Potresti incontrare ambiguit\u00e0 quando un termine \u00e8 usato sia in campo astronomico che in contesti non astronomici, ad esempio 'aurora' che pu\u00f2 riferirsi sia all'evento astronomico che al nome di persona.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "DIS",
+    "real_name": "malattia",
+    "sentences_as_example": [
+      {
+        "frase": "La formazione di fistole artero-venose polmonari pu\u00f2 portare a una sindrome cianotica .",
+        "entit\u00e0": [
+          "fistole artero-venose polmonari"
+        ]
+      },
+      {
+        "frase": "Oltre questa distanza , \u00e8 in atto convenzionalmente la patologia chiamata presbiopia .",
+        "entit\u00e0": [
+          "presbiopia"
+        ]
+      },
+      {
+        "frase": "Le loro caratteristiche variano a seconda delle ansie , delle paure o degli obiettivi del bambino .",
+        "entit\u00e0": [
+          "ansie"
+        ]
+      }
+    ],
+    "prompt_length": 615,
+    "output_length": 152,
+    "gpt_DeG": "{\"Definition\": \"'malattia' si riferisce a condizioni patologiche, sindromi, disturbi, e problemi di salute fisica o mentale.\", \"Guidelines\": \"Stai attento a non etichettare concetti generici o sintomi come 'malattia'. Ad esempio, 'ansie' non \u00e8 una malattia, ma potrebbe essere un sintomo di disturbi d'ansia. Assicurati di non confondere nomi di farmaci o trattamenti con il nome di una malattia. Ad esempio, 'antibiotico' \u00e8 un trattamento per alcune malattie, non una malattia in s\u00e9.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "EVE",
+    "real_name": "evento",
+    "sentences_as_example": [
+      {
+        "frase": "La pellicola \u00e8 stata presentata al Sundance Film Festival il 23 gennaio 2015 .",
+        "entit\u00e0": [
+          "Sundance Film Festival"
+        ]
+      },
+      {
+        "frase": "Prese poi parte , senza grandi pretese , al Tour de France .",
+        "entit\u00e0": [
+          "Tour de France"
+        ]
+      },
+      {
+        "frase": "Nel 2008 viene convocato per gli Europei in Austria e Svizzera .",
+        "entit\u00e0": [
+          "Europei"
+        ]
+      }
+    ],
+    "prompt_length": 588,
+    "output_length": 190,
+    "gpt_DeG": "{\"Definition\": \"'evento' si riferisce a eventi specifici, come festival, competizioni sportive, conferenze, spettacoli, conferimenti di premi, presentazioni, riunioni e altri eventi pubblici o privati.\", \"Guidelines\": \"Evita di etichettare le parole generiche o ambigue come 'parte' o 'convocato' come eventi, a meno che non siano chiaramente contestualizzate in un evento specifico. Presta attenzione a nomi che potrebbero essere ambigui, come 'Europei' che potrebbe riferirsi a diversi eventi sportivi. Assicurati di distinguere tra entit\u00e0 che rappresentano eventi e altre categorie come persone, organizzazioni o luoghi che potrebbero avere nomi simili a eventi specifici.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "FOOD",
+    "real_name": "cibo",
+    "sentences_as_example": [
+      {
+        "frase": "Sono piante visitate dalle api per la produzione di miele di melata .",
+        "entit\u00e0": [
+          "miele"
+        ]
+      },
+      {
+        "frase": "\u00c8 ovoviviparo e gli embrioni si nutrono solamente di tuorlo .",
+        "entit\u00e0": [
+          "tuorlo"
+        ]
+      },
+      {
+        "frase": "Viene fritta in olio , poi immersa nel miele e poi vengono aggiunti i semi di sesamo .",
+        "entit\u00e0": [
+          "olio",
+          "miele",
+          "semi di sesamo"
+        ]
+      }
+    ],
+    "prompt_length": 608,
+    "output_length": 226,
+    "gpt_DeG": "{\"Definition\": \"'cibo' denota sostanze o prodotti consumabili solidi o liquidi utilizzati per il nutrimento umano o animale, come ingredienti primari o condimenti.\", \"Guidelines\": \"Assicurati di evidenziare solo sostanze consumabili come cibo. Evita di etichettare oggetti non commestibili o entit\u00e0 non direttamente associate con il consumo alimentare. Ad esempio, 'piatti', 'stoviglie' e 'posate' non dovrebbero essere etichettati come 'cibo', anche se sono necessari per consumare cibo. Inoltre, evita di etichettare nomi di animali o piante che sono considerati come fonte di cibo, a meno che non sia riferito specificamente alla loro propriet\u00e0 alimentare. Ad esempio, 'api' non dovrebbero essere etichettate come 'cibo', anche se sono coinvolte nella produzione di miele.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "INST",
+    "real_name": "strumento",
+    "sentences_as_example": [
+      {
+        "frase": "A gennaio 1977 , e le vendite dei suoi computer , tra cui l' Apple II , crebbero rapidamente .",
+        "entit\u00e0": [
+          "Apple II"
+        ]
+      },
+      {
+        "frase": "\u00e8 disponibile in due versioni : in Java e in Flash .",
+        "entit\u00e0": [
+          "Flash"
+        ]
+      },
+      {
+        "frase": "La console legge anche CD-ROM , Super Audio CD e DVD-ROM .",
+        "entit\u00e0": [
+          "CD-ROM",
+          "Super Audio CD",
+          "DVD-ROM"
+        ]
+      }
+    ],
+    "prompt_length": 593,
+    "output_length": 187,
+    "gpt_DeG": "{\"Definition\": \"'strumento' si riferisce a dispositivi, apparecchiature o oggetti utilizzati per svolgere una specifica funzione o compito, come strumenti musicali, dispositivi elettronici, e equipaggiamenti tecnici.\", \"Guidelines\": \"Assicurati di distinguere tra nomi di dispositivi e oggetti utili (come 'CD-ROM', 'Super Audio CD', 'DVD-ROM') e termini che potrebbero riferirsi ad altri concetti. Ad esempio, 'Java' potrebbe riferirsi al linguaggio di programmazione o al caff\u00e8, quindi considera attentamente il contesto. Escludi nomi di concetti astratti non tangibili o generici come 'amore' o 'pazienza', che non rappresentano strumenti fisici.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "LOC",
+    "real_name": "localit\u00e0",
+    "sentences_as_example": [
+      {
+        "frase": "La massima altitudine \u00e8 la cima Carega ( 2259 \" m ) .",
+        "entit\u00e0": [
+          "cima Carega"
+        ]
+      },
+      {
+        "frase": "Protagonista una ristretta cerchia di conoscenti dell' Oregon .",
+        "entit\u00e0": [
+          "Oregon"
+        ]
+      },
+      {
+        "frase": "Nel 2002 lanciano un' iniziativa contro lo sfruttamento della prostituzione minorile in Indocina .",
+        "entit\u00e0": [
+          "Indocina"
+        ]
+      }
+    ],
+    "prompt_length": 598,
+    "output_length": 156,
+    "gpt_DeG": "{\"Definition\": \"'localit\u00e0' identifica specifiche aree geografiche, come montagne, fiumi, deserti, isole, regioni, e altre caratteristiche geografiche distinte.\", \"Guidelines\": \"Evita di etichettare concetti astratti o nomi generici come 'localit\u00e0'. Ad esempio, 'massima altitudine' \u00e8 una caratteristica geografica, ma non \u00e8 una 'localit\u00e0'. Assicurati di distinguere tra nomi geografici specifici e concetti generali che potrebbero essere confusi come 'localit\u00e0'.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "MEDIA",
+    "real_name": "media",
+    "sentences_as_example": [
+      {
+        "frase": "Il nuovo album si intitoler\u00e0 \" Hollywood Trash \" e verr\u00e0 realizzato nel 2001 .",
+        "entit\u00e0": [
+          "Hollywood Trash"
+        ]
+      },
+      {
+        "frase": "Divenne anche corrispondente estero per \" The New Yorker \" .",
+        "entit\u00e0": [
+          "The New Yorker"
+        ]
+      },
+      {
+        "frase": "Durante il tour di Turn on the bright lights si occupa di entrambi gli strumenti anche dal vivo .",
+        "entit\u00e0": [
+          "Turn on the bright lights"
+        ]
+      }
+    ],
+    "prompt_length": 595,
+    "output_length": 194,
+    "gpt_DeG": "{\"Definition\": \"'media' si riferisce a entit\u00e0 come nomi di giornali, riviste, libri, album musicali, film, programmi televisivi, spettacoli teatrali e altre opere creative e di comunicazione.\", \"Guidelines\": \"Assicurati di etichettare solo nomi specifici di opere creative e di comunicazione, evitando generici come 'musica' o 'libro'. Presta attenzione alle ambiguit\u00e0, ad esempio 'Apple' potrebbe riferirsi alla societ\u00e0 tecnologica o ad un'opera d'arte. Escludi i nomi di artisti, autori o registi, che dovrebbero essere etichettati come 'persona', e nomi generici di strumenti musicali o generi letterari che non rappresentano opere specifiche.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "MYTH",
+    "real_name": "entit\u00e0 mitologica",
+    "sentences_as_example": [
+      {
+        "frase": "Asclepio era il dio della salute nell' antico pantheon greco .",
+        "entit\u00e0": [
+          "Asclepio"
+        ]
+      },
+      {
+        "frase": "Secondo eruditi locali settecenteschi sarebbe stato dedicato a Diana .",
+        "entit\u00e0": [
+          "Diana"
+        ]
+      },
+      {
+        "frase": "In questo testo veniva riportato l' arrivo di Enea nel Lazio e la storia di Romolo e Remo .",
+        "entit\u00e0": [
+          "Romolo e Remo",
+          "Enea"
+        ]
+      }
+    ],
+    "prompt_length": 604,
+    "output_length": 193,
+    "gpt_DeG": "{\"Definition\": \"'entit\u00e0 mitologica' denota personaggi, divinit\u00e0, creature o figure mitologiche provenienti da tradizioni religiose, miti, leggende o folklore.\", \"Guidelines\": \"Assicurati di non etichettare come 'entit\u00e0 mitologica' personaggi storici o letterari reali. Ad esempio, 'Alessandro Magno' \u00e8 un personaggio storico, non una figura mitologica. Inoltre, fai attenzione a distinguere nomi comuni o nomi di luoghi che possono riferirsi anche a figure mitologiche, come 'Diana', che pu\u00f2 essere un nome proprio e il nome della dea romana della caccia. Assicurati di contestualizzare adeguatamente l'entit\u00e0 all'interno delle tradizioni mitologiche di riferimento.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "ORG",
+    "real_name": "organizzazione",
+    "sentences_as_example": [
+      {
+        "frase": "Nell' estate del 2012 fa rientro all' Udinese diventando portiere titolare della prima squadra .",
+        "entit\u00e0": [
+          "Udinese"
+        ]
+      },
+      {
+        "frase": "Cresciuto a Berlino , si laurea in filosofia presso l' Universit\u00e0 Ebraica di Gerusalemme .",
+        "entit\u00e0": [
+          "Universit\u00e0 Ebraica di Gerusalemme"
+        ]
+      },
+      {
+        "frase": "La \" Kriegsmarine \" rispose prontamente identificando ed eliminando i difetti .",
+        "entit\u00e0": [
+          "Kriegsmarine"
+        ]
+      }
+    ],
+    "prompt_length": 618,
+    "output_length": 142,
+    "gpt_DeG": "{\"Definition\": \"'organizzazione' si riferisce a istituzioni, aziende, enti, associazioni e altre entit\u00e0 organizzate con uno scopo specifico.\", \"Guidelines\": \"Assicurati di etichettare solo entit\u00e0 organizzate e istituzioni. Evita di etichettare nomi propri di persone, a meno che non rappresentino un'organizzazione specifica. Fai attenzione a non etichettare nomi di eventi o concetti astratti come organizzazioni. Ad esempio, 'Rinascimento' \u00e8 un periodo storico, non un'organizzazione.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "PER",
+    "real_name": "persona",
+    "sentences_as_example": [
+      {
+        "frase": "Altri grandi piloti ad usarlo furono Georges Guynemer , Ren\u00e9 Fonck e Eddie Rickenbacker .",
+        "entit\u00e0": [
+          "Eddie Rickenbacker",
+          "Georges Guynemer",
+          "Ren\u00e9 Fonck"
+        ]
+      },
+      {
+        "frase": "In questo periodo anche Kevin Ayers entra nel gruppo , di cui diviene membro occasionale .",
+        "entit\u00e0": [
+          "Kevin Ayers"
+        ]
+      },
+      {
+        "frase": "Qui conobbe il cantante e chitarrista Jo\u00e3o Gilberto , anche lui bahiano , che spos\u00f2 nel 1959 .",
+        "entit\u00e0": [
+          "Jo\u00e3o Gilberto"
+        ]
+      }
+    ],
+    "prompt_length": 623,
+    "output_length": 205,
+    "gpt_DeG": "{\"Definition\": \"'persona' identifica individui specifici inclusi ma non limitati a persone reali, personaggi storici, celebrit\u00e0, artisti, politici, atleti, figure religiose, e personaggi letterari o cinematografici.\", \"Guidelines\": \"Evita di etichettare nomi di luoghi, oggetti o concetti astratti come 'persona'. Ad esempio, 'Monte Everest' e 'L'arte della Guerra' non sono persone, quindi non dovrebbero essere etichettati come 'persona'. Presta attenzione anche alle situazioni ambigue, come nomi comuni o termini che potrebbero riferirsi a entit\u00e0 diverse. Ad esempio, 'Maria' potrebbe essere un nome di persona o un riferimento religioso, quindi considera il contesto circostante per determinare correttamente l'etichetta 'persona'.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "PLANT",
+    "real_name": "pianta",
+    "sentences_as_example": [
+      {
+        "frase": "La vegetazione prevalente \u00e8 composta da \" Suaeda vera \" .",
+        "entit\u00e0": [
+          "Suaeda vera"
+        ]
+      },
+      {
+        "frase": "\u00c8 questo il limite meridionale dell' areale del faggio ( \" Fagus sylvatica \" ) .",
+        "entit\u00e0": [
+          "Fagus sylvatica"
+        ]
+      },
+      {
+        "frase": "Questa trib\u00f9 comprende alberi , arbusti , subarbusti ed erbe perenni o annue .",
+        "entit\u00e0": [
+          "arbusti",
+          "erbe",
+          "alberi"
+        ]
+      }
+    ],
+    "prompt_length": 611,
+    "output_length": 121,
+    "gpt_DeG": "{\"Definition\": \"'Pianta' si riferisce a organismi vegetali come alberi, arbusti, erbe e altre forme di vegetazione.\", \"Guidelines\": \"Quando identifichi entit\u00e0 'pianta', assicurati di etichettare solo nomi di specie vegetali specifiche, come 'Fagus sylvatica', 'Suaeda vera', 'Betula pendula', evitando generici come 'alberi' o 'arbusti' se non accompagnati da una specificazione della specie.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "TIME",
+    "real_name": "tempo",
+    "sentences_as_example": [
+      {
+        "frase": "Il primo trailer del film viene diffuso il 4 dicembre 2015 .",
+        "entit\u00e0": [
+          "4 dicembre 2015"
+        ]
+      },
+      {
+        "frase": "Nel 1938 compirono il loro unico viaggio all' estero , trascorrendo una settimana a Londra .",
+        "entit\u00e0": [
+          "1938"
+        ]
+      },
+      {
+        "frase": "Attiguo alla parrocchiale \u00e8 il campanile , risalente all' incirca all' inizio del XIX secolo .",
+        "entit\u00e0": [
+          "inizio del XIX secolo"
+        ]
+      }
+    ],
+    "prompt_length": 617,
+    "output_length": 166,
+    "gpt_DeG": "{\"Definition\": \"'tempo' denota una data specifica, un intervallo temporale, o una specifica porzione di tempo in una frase.\", \"Guidelines\": \"Assicurati di catturare correttamente espressioni temporali, come date specifiche, periodi storici, anni, decadi, secoli, e relative indicazioni temporali. Distingui tra espressioni temporali e numeri che non rappresentano specifiche temporali, come ad esempio 'due', 'tre', 'primo' quando non si riferiscono a una data precisa. Prendi in considerazione la presenza di referenze temporali storiche che potrebbero essere confuse con nomi di luoghi o entit\u00e0 non temporali.\"}",
+    "finish_reason": "stop"
+  },
+  {
+    "ne_tag": "VEHI",
+    "real_name": "veicolo",
+    "sentences_as_example": [
+      {
+        "frase": "La DBR9 e la Vantage GT2 sono state invece riservate per la vendita a scuderie private .",
+        "entit\u00e0": [
+          "DBR9",
+          "Vantage GT2"
+        ]
+      },
+      {
+        "frase": "L' incrociatore da battaglia \" Akagi \" fu completato come portaerei .",
+        "entit\u00e0": [
+          "Akagi"
+        ]
+      },
+      {
+        "frase": "Il resto del corpo vettura era simile a quello delle TR4 / TR5 .",
+        "entit\u00e0": [
+          "TR4"
+        ]
+      }
+    ],
+    "prompt_length": 603,
+    "output_length": 166,
+    "gpt_DeG": "{\"Definition\": \"'veicolo' si riferisce a mezzi di trasporto come automobili, aerei, imbarcazioni, treni, biciclette e altri mezzi simili.\", \"Guidelines\": \"Quando identifichi veicoli, assicurati di escludere nomi di persone, marchi di prodotti non correlati a veicoli (ad esempio, Apple \u00e8 un marchio di prodotti elettronici, non un veicolo), e termini generici che potrebbero causare ambiguit\u00e0 con altri concetti (ad esempio, 'veloce' in 'macchina veloce' potrebbe riferirsi a un'auto performante o a un'attivit\u00e0 rapida).\"}",
+    "finish_reason": "stop"
+  }
+]
