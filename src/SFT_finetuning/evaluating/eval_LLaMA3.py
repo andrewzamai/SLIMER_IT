@@ -1,12 +1,10 @@
 """
-Evaluating SLIMER-IT Llama-2-7B for zero-shot NER on Italian datasets
+Evaluating SLIMER-IT Llama-3-8B for zero-shot NER on Italian datasets
 
 - Using provided uniNER official evaluation script
 
 - Using vLLM library for faster inference
 """
-
-__package__ = "SFT_finetuning.evaluating"
 
 import shutil
 
@@ -30,9 +28,9 @@ import uniNER_official_eval_script
 from src.data_handlers.KIND import KIND
 from src.data_handlers.Multinerd_it import Multinerd_it
 
-from ..commons.initialization import get_HF_access_token
-from ..commons.preprocessing import truncate_input
-from ..commons.prompter import Prompter
+from src.SFT_finetuning.commons.initialization import get_HF_access_token
+from src.SFT_finetuning.commons.preprocessing import truncate_input
+from src.SFT_finetuning.commons.prompter import Prompter
 
 def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, data_handler, with_definition):
     path_to_BIO = f'./datasets/{datasets_cluster_name}'
@@ -41,11 +39,13 @@ def load_or_build_dataset_GenQA_format(datasets_cluster_name, subdataset_name, d
     path_to_guidelines = None
     if with_definition:
         path_to_guidelines = f'./src/def_and_guidelines/{datasets_cluster_name}.json'
-    dataset_manager = data_handler(path_to_BIO,
-                                path_to_templates='./src/templates',
-                                SLIMER_prompter_name='SLIMER_instruction_it',
-                                path_to_DeG=path_to_guidelines,
-                                test_only=True)
+    dataset_manager = data_handler(
+        path_to_BIO,
+        path_to_templates='./src/templates',
+        SLIMER_prompter_name='SLIMER_instruction_it',
+        path_to_DeG=path_to_guidelines,
+        test_only=True
+    )
 
     test_dataset = dataset_manager.dataset_dict_SLIMER['test']
     if subdataset_name != []:
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     max_new_tokens = 128
     print(f"max_new_tokens {max_new_tokens}")
 
-    vllm_model = LLM(model=model_path_or_name, download_dir='./hf_cache_dir')
+    vllm_model = LLM(model=model_path_or_name) #, download_dir='./hf_cache_dir')
 
     tokenizer = vllm_model.get_tokenizer()
 
@@ -121,9 +121,6 @@ if __name__ == '__main__':
             print(dataset_GenQA_format[0])
             sys.stdout.flush()
 
-            # TODO: remove after debugging
-            # dataset_GenQA_format = Dataset.from_list(dataset_GenQA_format.to_list()[0:20])
-
             indices_per_tagName = {}
             for i, sample in enumerate(dataset_GenQA_format):
                 tagName = sample['tagName']
@@ -134,15 +131,6 @@ if __name__ == '__main__':
             # retrieving gold answers (saved in ouput during dataset conversion from uniNER eval datatasets)
             all_gold_answers = dataset_GenQA_format['output']
 
-            # masking tagName if necessary
-            """
-            instructions = []
-            for sample in dataset_MSEQA_format:
-                tagName = sample['tagName']
-                pattern = re.compile(rf'{re.escape(tagName)}', flags=re.IGNORECASE)
-                sample['instruction'] = pattern.sub('<unk>', sample['instruction'])
-                instructions.append(sample['instruction'])
-            """
             instructions = dataset_GenQA_format['instruction']
             print(instructions[0])
             sys.stdout.flush()
@@ -183,11 +171,6 @@ if __name__ == '__main__':
                         chunks_per_sample[sample['doc_tag_pairID']].append(chunk_id)
                         batch_instruction_input_pairs.append((instruction, chunk_input))
                         chunk_id += 1
-
-                        #print(chunk_input)
-                        #print("\n\n")
-                        #sys.stdout.flush()
-                    #print("\n\n------------------------------------------\n\n")
 
                 sys.stdout.flush()
 
@@ -311,14 +294,5 @@ if __name__ == '__main__':
             print("\n")
 
     print("\nDONE :)")
-
-    #TODO: DELETING MODEL!
-
-    print("Assuming model is on HF, deleting model!!!")
-    if 'andrewzamai' in model_path_or_name:
-        model_path_or_name = os.path.join('./hf_cache_dir', 'models--andrewzamai--' + model_path_or_name.split("/")[-1])
-
-    #shutil.rmtree(model_path_or_name)
-
 
     sys.stdout.flush()

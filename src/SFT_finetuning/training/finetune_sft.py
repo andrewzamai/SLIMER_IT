@@ -1,6 +1,4 @@
-""" Supervised Fine-tuning Trainer (SFT) for generative LLMs """
-
-__package__ = "SFT_finetuning.training"
+""" SLIMER-IT fine-tuning """
 
 import os
 import sys
@@ -17,9 +15,9 @@ from datasets import load_dataset
 from peft import set_peft_model_state_dict
 from transformers import EarlyStoppingCallback
 
-from ..commons.initialization import init_model, wrap_model_for_peft, get_HF_access_token
-from ..commons.preprocessing import generate_and_tokenize_prompt
-from ..commons.prompter import Prompter
+from src.SFT_finetuning.commons.initialization import init_model, wrap_model_for_peft, get_HF_access_token
+from src.SFT_finetuning.commons.preprocessing import generate_and_tokenize_prompt
+from src.SFT_finetuning.commons.prompter import Prompter
 
 
 def train(
@@ -144,14 +142,6 @@ def train(
         use_flash_attention=use_flash_attention
     )
 
-    for idx, block in enumerate(model.gpt_neox.layers):
-        # Access the attention module within the block
-        attention = block.attention
-
-        # Identify the query, key, and value projection layers
-        print(attention)
-        sys.stdout.flush()
-
     if use_lora:
         model = wrap_model_for_peft(
             model,
@@ -183,49 +173,9 @@ def train(
     if output_col:
         data = data.rename_column(output_col, "output")
 
-    if resume_from_checkpoint:
-        # Check the available weights and load them
-        checkpoint_name = os.path.join(
-            resume_from_checkpoint, "pytorch_model.bin"
-        )  # Full checkpoint
-        if not os.path.exists(checkpoint_name):
-            checkpoint_name = os.path.join(
-                resume_from_checkpoint, "adapter_model.safetensors"
-            )  # only LoRA model - LoRA config above has to fit
-            resume_from_checkpoint = (
-                False  # So the trainer won't try loading its state
-            )
-        # The two files above have a different name depending on how they were saved, but are actually the same.
-        if os.path.exists(checkpoint_name):
-            print(f"Restarting from {checkpoint_name}")
-            # adapters_weights = torch.load(checkpoint_name)
-            # TODO: fix this
-            adapters_weights = {}
-            with safetensors.safe_open(checkpoint_name, framework="pt") as f:
-                for k in f.keys():
-                    adapters_weights[k] = f.get_tensor(k)
-            model = set_peft_model_state_dict(model, adapters_weights)
-        else:
-            print(f"Checkpoint {checkpoint_name} not found")
-
     train_data = data["train"]
-    """
-    print("Train statistics: ")
-    dataset_statistics = data_handler_pileNER.get_statistics_for_QA_dataset(train_data,
-                                                                            input_column_name='input',
-                                                                            instruction_column_name='instruction',
-                                                                            output_column_name='output')
-    print(dataset_statistics)
-    """
 
     print(train_data['instruction'][0])
-
-    # TODO: masking for enhanced training
-    # from MSEQA_4_NER.data_handlers.data_handler_pileNER import mask_named_entities
-    # train_data = mask_named_entities(train_data, corruption_prob=0.5, masking_prob=0.8, default_mask='<unk>')
-
-    #if os.path.exists(data_path[:-len(".json") + '_' + base_model.split("/")[-1] + '_tokenized'):
-    #train_data = load_dataset()
 
     if shuffle:
         # shuffle train_data
@@ -252,17 +202,6 @@ def train(
         if val_set_size == -1:
             val_set_size = len(val_data["train"])
         val_data = val_data["train"].select(list(range(min(val_set_size, len(val_data["train"])))))  # no more than val_set_size 5k examples
-        # TODO: masking for enhanced training
-        # val_data = mask_named_entities(val_data, corruption_prob=0.5, masking_prob=0.8, default_mask='<unk>')
-        """
-        print("Validation statistics: ")
-        dataset_statistics = data_handler_pileNER.get_statistics_for_QA_dataset(val_data,
-                                                                                input_column_name='input',
-                                                                                instruction_column_name='instruction',
-                                                                                output_column_name='output')
-        print(dataset_statistics)
-        """
-
         val_data = val_data.map(lambda x: generate_and_tokenize_prompt(x, tokenizer, prompter, cutoff_len, train_on_inputs), num_proc=30)
         val_set_size = len(val_data)
     else:
@@ -349,14 +288,12 @@ if __name__ == "__main__":
     # load HuggingFace access token with permissions to LLAMA2/3 repo
     # place token in .env file, otherwise skip
     from huggingface_hub import login
-
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
     # with_guidelines, number_NEs, number_pos_samples_per_NE, number_neg_samples_per_NE
     # use number_NEs=-1 to use all tags
-    parser = argparse.ArgumentParser(
-        description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
+    parser = argparse.ArgumentParser(description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
     # adding arguments
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
@@ -394,7 +331,7 @@ if __name__ == "__main__":
             dataset.to_json(f"./datasets/KIND/SLIMER/{dataset_name}/{split_name}.jsonl")
 
     # now loading training config from yml and overriding some variables like dataset name and output_dir
-    path_to_training_config = './src/SFT_finetuning/training_config/modelloItalia_4_NER_XDef_NsamplesPerNE.yml'
+    path_to_training_config = './src/SFT_finetuning/training_config/llama3_4_NER_XDef_NsamplesPerNE.yml'
     with open(path_to_training_config, 'rb') as f:
         configs = yaml.safe_load(f.read())
 
@@ -403,7 +340,7 @@ if __name__ == "__main__":
     configs['data_path'] = f"./datasets/KIND/SLIMER/{dataset_name}/train.jsonl"
     configs['val_data_path'] = f"./datasets/KIND/SLIMER/{dataset_name}/validation.jsonl"
 
-    configs['output_dir'] = f"./trained_models/{base_model_name}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    configs['output_dir'] = f"./trained_models/{base_model_name}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def"
 
     train(**configs)
 

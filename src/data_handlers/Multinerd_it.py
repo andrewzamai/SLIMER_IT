@@ -57,12 +57,12 @@ class Multinerd_it(Data_Interface):
 
 if __name__ == '__main__':
 
-
     path_to_BIO = '../../datasets/Multinerd_it'
 
     Multinerd_it_manager = Multinerd_it(path_to_BIO,
                                         path_to_templates='../templates/',
-                                        SLIMER_prompter_name='SLIMER_instruction_it', test_only=True,
+                                        SLIMER_prompter_name='SLIMER_instruction_it',
+                                        test_only=True,
                                         path_to_DeG='../def_and_guidelines/Multinerd_it.json')
 
     dataset_statistics = Multinerd_it_manager.get_dataset_statistics()

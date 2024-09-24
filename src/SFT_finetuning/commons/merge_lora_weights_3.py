@@ -1,7 +1,5 @@
 """ merge fine-tuned LORA adapter weights with base model """
 
-__package__ = "SFT_finetuning.commons"
-
 import os.path
 import sys
 import time
@@ -10,7 +8,7 @@ import argparse
 
 # my libraries
 from huggingface_hub import login
-from .initialization import get_HF_access_token, init_model
+from src.SFT_finetuning.commons.initialization import get_HF_access_token, init_model
 
 def merge_main(
     base_model: str = "meta-llama/Llama-2-7b-chat-hf",
