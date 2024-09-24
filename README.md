@@ -32,7 +32,10 @@ In contrast, Large Language Models (LLMs) have recently demonstrated strong zero
 However, little has been done for zero-shot NER in non-English data. To this end, we propose an evaluation framework for Zero-Shot NER, and we apply it to the Italian language. 
 In addition, we fine-tune a version of SLIMER for Italian, which we call SLIMER-IT. 
  
-Despite being trained only on the PER, LOC, and ORG classes from the news-focused KIND dataset, SLIMER-IT not only outperforms models like GNER and GLiNER trained in similar settings but also surpasses existing off-the-shelf zero-shot NER models based on the GLiNER approach, which were pre-trained on over 13,000 entities covering most known entity types.
+Despite being trained only on the PER, LOC, and ORG classes from the news-focused KIND dataset, SLIMER-IT not only outperforms models like GNER and GLiNER trained in similar settings but also surpasses existing off-the-shelf zero-shot NER models based on the GLiNER approach [1][2], which were pre-trained on over 13,000 entities covering most known entity types.
+
+[1] "https://huggingface.co/DeepMount00/universal_ner_ita"
+[2] https://huggingface.co/DeepMount00/GLiNER_ITA_LARGE
 
 PROs:
 
