@@ -139,7 +139,9 @@ if __name__ == "__main__":
             all_pred_answers = []
             indices_per_tagName = defaultdict(list)
 
+            prompts = []
             for sample in dataset_SLIMER_format:
+
                 input = sample['input']
 
                 batch_instruction_input_pairs = [
@@ -155,30 +157,28 @@ if __name__ == "__main__":
                     for x in sample['entities'].values()
                 ]
 
-                # this_sample_gold_answers = [x['output'] for x in sample['entities'].values()]
-
                 for tagName, values in sample['entities'].items():
                     indices_per_tagName[tagName].append(len(all_gold_answers))
                     all_gold_answers.append(values['output'])
 
-                prompts = [
+                prompts.extend([
                     prompter.generate_prompt(instruction, input)
                     for instruction, input in batch_instruction_input_pairs
                 ]
+                )
 
-                #prefix_end = prompts[0].find("Istruzione: ")
-                #prefix = prompts[0][0:prefix_end+len("Istruzione: ")]
-                # print(prefix)
+            #prefix_end = prompts[0].find("Istruzione: ")
+            #prefix = prompts[0][0:prefix_end+len("Istruzione: ")]
+            # print(prefix)
 
-                #start_time = time.time()
-                responses = vllm_model.generate(prompts, sampling_params)
-                #end_time = time.time()
-                #print(f"Generation time: {end_time - start_time} seconds.")
+            #start_time = time.time()
+            responses = vllm_model.generate(prompts, sampling_params)
+            #end_time = time.time()
+            #print(f"Generation time: {end_time - start_time} seconds.")
 
-                # 7) retrieve pred answers, aggregate them from chunks back to document level
-                all_pred_answers.extend([output.outputs[0].text.strip() for output in responses])
-                # print(all_pred_answers)
-
+            # 7) retrieve pred answers, aggregate them from chunks back to document level
+            all_pred_answers.extend([output.outputs[0].text.strip() for output in responses])
+            # print(all_pred_answers)
 
             # 8) Compute micro, perTagName, macro and weighted metrics
 
