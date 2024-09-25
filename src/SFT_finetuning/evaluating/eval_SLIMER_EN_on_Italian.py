@@ -133,7 +133,7 @@ if __name__ == '__main__':
             sys.stdout.flush()
 
             # TODO: remove after debugging
-            # dataset_GenQA_format = Dataset.from_list(dataset_GenQA_format.to_list()[0:20])
+            # dataset_SLIMER_format = Dataset.from_list(dataset_SLIMER_format.to_list()[0:20])
 
             indices_per_tagName = {}
             for i, sample in enumerate(dataset_GenQA_format):
