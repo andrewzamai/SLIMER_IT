@@ -67,9 +67,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("merged_model_name", type=str, help="path_to_merged_model")
     parser.add_argument("model_template_name", type=str, help="e.g. llama3_italian")
-    parser.add_argument(
-        "--with_guidelines", action="store_true", help="Whether to use Def & Guidelines"
-    )
+    parser.add_argument("--with_guidelines", action="store_true", help="Whether to use Def & Guidelines")
     args = parser.parse_args()
 
     to_eval_on = [
@@ -208,9 +206,7 @@ if __name__ == "__main__":
             all_pred_answers = [output.outputs[0].text.strip() for output in responses]
 
             if inputs_chunked_for_inference:
-                all_pred_answers = aggregate_preds_from_chunks(
-                    dataset_SLIMER_format, chunks_per_sample, all_pred_answers
-                )
+                all_pred_answers = aggregate_preds_from_chunks(dataset_SLIMER_format, chunks_per_sample, all_pred_answers)
 
             # 8) Compute micro, perTagName, macro and weighted metrics
 
@@ -356,16 +352,10 @@ if __name__ == "__main__":
                     }
                 )
 
-            path_to_save_predictions = os.path.join(
-                "./predictions", args.merged_model_name.split("/")[-1]
-            )
+            path_to_save_predictions = os.path.join("./predictions", args.merged_model_name.split("/")[-1])
             if not os.path.exists(path_to_save_predictions):
                 os.makedirs(path_to_save_predictions)
-            with open(
-                os.path.join(path_to_save_predictions, subdataset_name + ".json"),
-                "w",
-                encoding="utf-8",
-            ) as f:
+            with open(os.path.join(path_to_save_predictions, subdataset_name + ".json"), "w", encoding="utf-8",) as f:
                 json.dump(preds_to_save, f, ensure_ascii=False, indent=2)
             print("\n")
 
