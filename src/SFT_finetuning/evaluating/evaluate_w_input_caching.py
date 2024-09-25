@@ -77,11 +77,6 @@ if __name__ == "__main__":
 
     to_eval_on = [
         {
-            "datasets_cluster_name": "KIND",
-            "data_handler": KIND,
-            "subdataset_names": ["WN", "FIC", "ADG"],
-        },
-        {
             "datasets_cluster_name": "Multinerd_it",
             "data_handler": Multinerd_it,
             "subdataset_names": ["it"],
@@ -173,4 +168,4 @@ if __name__ == "__main__":
                 # 7) retrieve pred answers, aggregate them from chunks back to document level
                 all_pred_answers = [output.outputs[0].text.strip() for output in responses]
 
-
+                break
