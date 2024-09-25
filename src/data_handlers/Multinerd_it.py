@@ -80,13 +80,17 @@ if __name__ == '__main__':
     sample_w_gold_spans = Multinerd_it_manager.extract_gold_spans_per_ne_category(sample_BIO)
     print(sample_w_gold_spans)
 
-    extremITLLaMA_test = Multinerd_it_manager.convert_dataset_for_ExtremITLLaMA()['test']
-    print(extremITLLaMA_test)
-    print(extremITLLaMA_test[0])
+    dataset_SLIMER_prefix_caching = Multinerd_it_manager.convert_dataset_for_SLIMER_prefix_caching()
+    print(dataset_SLIMER_prefix_caching)
+    print(dataset_SLIMER_prefix_caching['test'][0])
 
-    dataset_dict_SLIMER = Multinerd_it_manager.dataset_dict_SLIMER
-    for split_name, dataset in dataset_dict_SLIMER.items():
-        dataset.to_json(f'../../datasets/Multinerd_it/SLIMER/{split_name}.jsonl')
+    #extremITLLaMA_test = Multinerd_it_manager.convert_dataset_for_ExtremITLLaMA()['test']
+    #print(extremITLLaMA_test)
+    #print(extremITLLaMA_test[0])
+
+    #dataset_dict_SLIMER = Multinerd_it_manager.dataset_dict_SLIMER
+    #for split_name, dataset in dataset_dict_SLIMER.items():
+        #dataset.to_json(f'../../datasets/Multinerd_it/SLIMER/{split_name}.jsonl')
 
     #sentences_per_ne_type = Multinerd_it_manager.get_n_sentences_per_ne_type(n_sentences_per_ne=3)
     #with open("../../datasets/multinerd/SLIMER/sentences_per_ne_type.json", 'w') as f:

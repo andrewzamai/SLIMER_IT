@@ -12,6 +12,7 @@ __package__ = "SLIMER_IT.src.data_handlers"
 from abc import ABC, abstractmethod
 from datasets import Dataset, DatasetDict
 from collections import OrderedDict
+from tqdm import tqdm
 from typing import Union
 import numpy as np
 import random
@@ -156,39 +157,41 @@ class Data_Interface(ABC):
         if self.path_to_DeG:
             DeG_per_NEs = self.load_DeG_per_NEs()
         for split_name, dataset_BIO in self.datasetdict_BIO.items():
-            for sample_BIO in dataset_BIO:
-                sample_gold_spans_per_ne = self.extract_gold_spans_per_ne_category(sample_BIO)
-                tag_ID = 0  # assign id to each tag: input x |NE|
-                for ne_tag, gold_spans in sample_gold_spans_per_ne.items():
-                    definition = ''
-                    guidelines = ''
-                    # get tag in its extended form and convert it to uppercase e.g. PERSON
-                    ne_tag_extended = self.get_map_to_extended_NE_name()[ne_tag].upper()
-                    if self.path_to_DeG:
-                        ne_tag_extended = DeG_per_NEs[ne_tag]['real_name'].upper()
-                        definition = DeG_per_NEs[ne_tag]['gpt_DeG']['Definition']
-                        guidelines = DeG_per_NEs[ne_tag]['gpt_DeG']['Guidelines']
+            with tqdm(total=len(dataset_BIO), desc=f"Converting {split_name} to SLIMER") as pbar:
+                for sample_BIO in tqdm(dataset_BIO):
+                    sample_gold_spans_per_ne = self.extract_gold_spans_per_ne_category(sample_BIO)
+                    tag_ID = 0  # assign id to each tag: input x |NE|
+                    for ne_tag, gold_spans in sample_gold_spans_per_ne.items():
+                        definition = ''
+                        guidelines = ''
+                        # get tag in its extended form and convert it to uppercase e.g. PERSON
+                        ne_tag_extended = self.get_map_to_extended_NE_name()[ne_tag].upper()
+                        if self.path_to_DeG:
+                            ne_tag_extended = DeG_per_NEs[ne_tag]['real_name'].upper()
+                            definition = DeG_per_NEs[ne_tag]['gpt_DeG']['Definition']
+                            guidelines = DeG_per_NEs[ne_tag]['gpt_DeG']['Guidelines']
 
-                    instruction = self.slimer_prompter.generate_prompt(ne_tag=ne_tag_extended,
-                                                                       definition=definition,
-                                                                       guidelines=guidelines)
+                        instruction = self.slimer_prompter.generate_prompt(ne_tag=ne_tag_extended,
+                                                                           definition=definition,
+                                                                           guidelines=guidelines)
 
-                    # sort text answers by increasing start positions
-                    ga_sorted_by_start_pos = sorted(gold_spans, key=lambda x: x[1])
-                    # retrieve only text answers
-                    ga_sorted_text_only = [item[0] for item in ga_sorted_by_start_pos]
-                    # deleting any duplicate while preserving order (order within document context)
-                    ga_sorted_text_only_wo_duplicates = list(OrderedDict.fromkeys(ga_sorted_text_only).keys())
-                    ga_dumped = json.dumps(ga_sorted_text_only_wo_duplicates)  # stringifying list
+                        # sort text answers by increasing start positions
+                        ga_sorted_by_start_pos = sorted(gold_spans, key=lambda x: x[1])
+                        # retrieve only text answers
+                        ga_sorted_text_only = [item[0] for item in ga_sorted_by_start_pos]
+                        # deleting any duplicate while preserving order (order within document context)
+                        ga_sorted_text_only_wo_duplicates = list(OrderedDict.fromkeys(ga_sorted_text_only).keys())
+                        ga_dumped = json.dumps(ga_sorted_text_only_wo_duplicates)  # stringifying list
 
-                    dataset_dict_SLIMER[split_name].append(
-                        {"doc_tag_pairID": sample_BIO['id'] + ":" + str(tag_ID),
-                         "input": ' '.join(sample_BIO['tokens']),
-                         "tagName": ne_tag,
-                         "instruction": instruction,
-                         "output": ga_dumped
-                         })
-                    tag_ID += 1
+                        dataset_dict_SLIMER[split_name].append(
+                            {"doc_tag_pairID": sample_BIO['id'] + ":" + str(tag_ID),
+                             "input": ' '.join(sample_BIO['tokens']),
+                             "tagName": ne_tag,
+                             "instruction": instruction,
+                             "output": ga_dumped
+                             })
+                        tag_ID += 1
+                    pbar.update(1)
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_SLIMER.items()})
 
@@ -251,6 +254,54 @@ class Data_Interface(ABC):
                 # random.shuffle(n_samples_per_NE_dataset[split])
 
         return DatasetDict({split: Dataset.from_list(values) for split, values in n_samples_per_NE_dataset.items()})
+
+    def convert_dataset_for_SLIMER_prefix_caching(self):
+        """ convert Dataset from BIO to SLIMER format
+        with features: doc_tag_pairID, tagName, input, instruction (with D&G if path_to_DeG provided) and output the gold answers spans """
+        dataset_dict_SLIMER = {split: [] for split in self.datasetdict_BIO.keys()}
+        if self.path_to_DeG:
+            DeG_per_NEs = self.load_DeG_per_NEs()
+        for split_name, dataset_BIO in self.datasetdict_BIO.items():
+            with tqdm(total=len(dataset_BIO), desc=f"Converting {split_name} to SLIMER prefix-caching") as pbar:
+                for sample_BIO in dataset_BIO:
+                    sample_gold_spans_per_ne = self.extract_gold_spans_per_ne_category(sample_BIO)
+                    sample_data = {
+                        "id": sample_BIO["id"],
+                        "input": ' '.join(sample_BIO['tokens']),
+                        "entities": {}
+                    }
+                    for ne_tag, gold_spans in sample_gold_spans_per_ne.items():
+                        definition = ''
+                        guidelines = ''
+                        # get tag in its extended form and convert it to uppercase e.g. PERSON
+                        ne_tag_extended = self.get_map_to_extended_NE_name()[ne_tag].upper()
+                        if self.path_to_DeG:
+                            ne_tag_extended = DeG_per_NEs[ne_tag]['real_name'].upper()
+                            definition = DeG_per_NEs[ne_tag]['gpt_DeG']['Definition']
+                            guidelines = DeG_per_NEs[ne_tag]['gpt_DeG']['Guidelines']
+
+                        instruction = self.slimer_prompter.generate_prompt(ne_tag=ne_tag_extended,
+                                                                           definition=definition,
+                                                                           guidelines=guidelines)
+
+                        # sort text answers by increasing start positions
+                        ga_sorted_by_start_pos = sorted(gold_spans, key=lambda x: x[1])
+                        # retrieve only text answers
+                        ga_sorted_text_only = [item[0] for item in ga_sorted_by_start_pos]
+                        # deleting any duplicate while preserving order (order within document context)
+                        ga_sorted_text_only_wo_duplicates = list(OrderedDict.fromkeys(ga_sorted_text_only).keys())
+                        ga_dumped = json.dumps(ga_sorted_text_only_wo_duplicates)  # stringifying list
+
+                        sample_data['entities'][ne_tag] = {
+                            "instruction": instruction,
+                            "output": ga_dumped
+                        }
+
+                    dataset_dict_SLIMER[split_name].append(sample_data)
+                    pbar.update(1)
+
+        return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_SLIMER.items()})
+
 
     """ Functions to extract N sentences per NE to show examples of NE in context for prompting ChatGPT for D&G"""
 
