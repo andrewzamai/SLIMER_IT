@@ -62,10 +62,21 @@ if __name__ == '__main__':
 
     #from src.data_handlers.KIND import KIND
     from datasets import load_dataset
-    path_to_dataset = "../../../datasets/Multinerd_it/SLIMER/test.jsonl"
-    data = load_dataset("json", data_files=path_to_dataset)
+    #path_to_dataset = "../../../datasets/Multinerd_it/SLIMER/test.jsonl"
+    #data = load_dataset("json", data_files=path_to_dataset)
 
-    samples = data['train']
+    from src.data_handlers.Multinerd_it import Multinerd_it
+    path_to_BIO = '../../../datasets/Multinerd_it'
+
+    Multinerd_it_manager = Multinerd_it(path_to_BIO,
+                                        path_to_templates='../../templates/',
+                                        SLIMER_prompter_name='SLIMER_instruction_it',
+                                        test_only=True,
+                                        path_to_DeG='../../def_and_guidelines/Multinerd_it.json')
+
+    data = Multinerd_it_manager.dataset_dict_SLIMER
+
+    samples = data['test']
     for sample in samples:
         if sample['tagName'] == 'MYTH':
             prompt = Prompter("llama3_italian", template_path="../templates").generate_prompt(
@@ -73,8 +84,9 @@ if __name__ == '__main__':
                 input=sample['input'],
                 label=sample['output'])
 
-            #print(json.dumps(prompt))
             print(prompt)
+
+            print(json.dumps(prompt))
             break
 
     """
