@@ -77,7 +77,7 @@ pip install -r ./requirements.txt
 Evaluate SLIMER-IT w/ D&G on KIND and Multinerd-IT datasets
 ```
 # evaluate_vLLM.py <merged_model_name> <template_name> --with_guidelines
-e.g. PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py expertai/LLaMAntino-3-SLIMER-IT llama3_italian --with_guidelines
+PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py expertai/LLaMAntino-3-SLIMER-IT llama3_italian --with_guidelines
 ```
 
 Train, merge, evaluate your SLIMER:
