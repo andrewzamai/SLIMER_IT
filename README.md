@@ -109,37 +109,40 @@ A simple inference example is as follows:
 
 ```python
 from vllm import LLM, SamplingParams
-from src.SFT_finetuning.commons.prompter import SLIMER_instruction_prompter, Prompter
+from src.SFT_finetuning.commons.prompter import Prompter as LLM_Prompter
+from src.SLIMER_Prompter import SLIMER_Prompter as SLIMER_instruction_prompter
 
-
-vllm_model = LLM("expertai/SLIMER")
+vllm_model = LLM("expertai/LLaMAntino-3-SLIMER-IT")
 # it is recommended to use a temperature of 0
 # max_new_tokens can be adjusted depending on the expected length and number of entities (default 128)
-sampling_params = SamplingParams(temperature=0, max_tokens=128, stop=['</s>'])
+sampling_params = SamplingParams(temperature=0, max_tokens=128)
 
 # suppose we want to extract the entities of type "algorithm", we just need to write the definition and guidelines in simple syntax
-tag_to_extract = "algorithm"
-tag_definition = "ALGORITHM entities refer to specific computational procedures or methods designed to solve a problem or perform a task within the field of computer science or related disciplines."
-tag_guidelines = "Avoid labeling generic technology or software names without specific algorithmic context. Exercise caution with terms that may denote both a specific algorithm and a generic concept, such as 'neural network'."
+tag_to_extract = "ENTITÀ MITOLOGICA"
+tag_definition = "ENTITÀ MITOLOGICA denota personaggi, divinità, creature o figure mitologiche provenienti da tradizioni religiose, miti, leggende o folklore."
+tag_guidelines = "Assicurati di non etichettare come ENTITÀ MITOLOGICA personaggi storici o letterari reali. Ad esempio, 'Alessandro Magno' è un personaggio storico, non una figura mitologica. Inoltre, fai attenzione a distinguere nomi comuni o nomi di luoghi che possono riferirsi anche a figure mitologiche, come 'Diana', che può essere un nome proprio e il nome della dea romana della caccia. Assicurati di contestualizzare adeguatamente l'entità all'interno delle tradizioni mitologiche di riferimento."
 
 # format the Def & Guidelines into SLIMER instruction
-slimer_prompter = SLIMER_instruction_prompter("SLIMER_instruction_template", template_path='./src/SFT_finetuning/templates')
+slimer_prompter = SLIMER_instruction_prompter("SLIMER_instruction_it", template_path='./src/templates')
 instruction = slimer_prompter.generate_prompt(ne_tag=tag_to_extract, definition=tag_definition, guidelines=tag_guidelines)
 print(instruction)
-"Extract the Named Entities of type ALGORITHM from the text chunk you have read. You are given a DEFINITION and some GUIDELINES.\nDEFINITION: ALGORITHM entities refer to specific computational procedures or methods designed to solve a problem or perform a task within the field of computer science or related disciplines.\nGUIDELINES: Avoid labeling generic technology or software names without specific algorithmic context. Exercise caution with terms that may denote both a specific algorithm and a generic concept, such as 'neural network'.\nReturn a JSON list of instances of this Named Entity type. Return an empty list if no instances are present."
+"Estrai tutte le entità di tipo ENTITÀ MITOLOGICA dal testo che hai letto. Ti vengono fornite una DEFINIZIONE e alcune LINEE GUIDA.
+DEFINIZIONE: ENTITÀ MITOLOGICA denota personaggi, divinità, creature o figure mitologiche provenienti da tradizioni religiose, miti, leggende o folklore.
+LINEE GUIDA: Assicurati di non etichettare come ENTITÀ MITOLOGICA personaggi storici o letterari reali. Ad esempio, 'Alessandro Magno' è un personaggio storico, non una figura mitologica. Inoltre, fai attenzione a distinguere nomi comuni o nomi di luoghi che possono riferirsi anche a figure mitologiche, come 'Diana', che può essere un nome proprio e il nome della dea romana della caccia. Assicurati di contestualizzare adeguatamente l'entità all'interno delle tradizioni mitologiche di riferimento.
+Restituisci una lista JSON di istanze di questo tipo. Restituisci una lista vuota se non sono presenti istanze."
 
-input_text = "Typical generative model approaches include naive Bayes classifier s , Gaussian mixture model s , variational autoencoders and others ."
+input_text = "Zeus, il re degli dèi dell'Olimpo, osservava mentre Poseidone agitava i mari e Atena, la dea della saggezza, pianificava la sua prossima mossa contro i Titani."
 
 # prefix the input text to the instruction and format it into LLaMA-2 template 
-llama2_prompter = Prompter('LLaMA2-chat', template_path='./src/SFT_finetuning/templates', eos_text='')
-prompts = [llama2_prompter.generate_prompt(instruction, input_text)]
+llama3_prompter = LLM_Prompter('llama3_italian', template_path='./src/SFT_finetuning/templates', eos_text='')
+prompts = [llama3_prompter.generate_prompt(instruction, input_text)]
 print(prompts[0])
-"[INST] You are given a text chunk (delimited by triple quotes) and an instruction.\nRead the text and answer to the instruction in the end.\n\"\"\"\nTypical generative model approaches include naive Bayes classifier s , Gaussian mixture model s , variational autoencoders and others .\n\"\"\"\nInstruction: Extract the Named Entities of type ALGORITHM from the text chunk you have read. You are given a DEFINITION and some GUIDELINES.\nDEFINITION: ALGORITHM entities refer to specific computational procedures or methods designed to solve a problem or perform a task within the field of computer science or related disciplines.\nGUIDELINES: Avoid labeling generic technology or software names without specific algorithmic context. Exercise caution with terms that may denote both a specific algorithm and a generic concept, such as 'neural network'.\nReturn a JSON list of instances of this Named Entity type. Return an empty list if no instances are present.\n[/INST]"
+"<|start_header_id|>system<|end_header_id|>\n\n Sei un utile assistente.<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\nTi viene fornito un input di testo (delimitato da tre virgolette) e un'istruzione. \nLeggi il testo e rispondi all'istruzione alla fine.\n\"\"\"\nZeus, il re degli dèi dell'Olimpo, osservava mentre Poseidone agitava i mari e Atena, la dea della saggezza, pianificava la sua prossima mossa contro i Titani.\n\"\"\"\nIstruzione: Estrai tutte le entit\u00e0 di tipo ENTIT\u00c0 MITOLOGICA dal testo che hai letto. Ti vengono fornite una DEFINIZIONE e alcune LINEE GUIDA.\nDEFINIZIONE: ENTIT\u00c0 MITOLOGICA denota personaggi, divinit\u00e0, creature o figure mitologiche provenienti da tradizioni religiose, miti, leggende o folklore.\nLINEE GUIDA: Assicurati di non etichettare come ENTIT\u00c0 MITOLOGICA personaggi storici o letterari reali. Ad esempio, 'Alessandro Magno' \u00e8 un personaggio storico, non una figura mitologica. Inoltre, fai attenzione a distinguere nomi comuni o nomi di luoghi che possono riferirsi anche a figure mitologiche, come 'Diana', che pu\u00f2 essere un nome proprio e il nome della dea romana della caccia. Assicurati di contestualizzare adeguatamente l'entit\u00e0 all'interno delle tradizioni mitologiche di riferimento.\nRestituisci una lista JSON di istanze di questo tipo. Restituisci una lista vuota se non sono presenti istanze.<|eot_id|>"
 
 responses = vllm_model.generate(prompts, sampling_params)
 all_pred_answers = [output.outputs[0].text.strip() for output in responses]
 print(all_pred_answers[0])
-"[\"naive Bayes classifier\", \"Gaussian mixture model\", \"variational autoencoders\"]"
+"[\"Zeus\", \"Poseidone\", \"Atena\", \"Titani\"]"
 ```
     
 ## 📚 Citation
