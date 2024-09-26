@@ -12,7 +12,7 @@
 
 ## Instruct your LLM with Definitions and Guidelines for Zero-Shot NER 🔎 📖
 
-Specifically instructed on Italian language, SLIMER-IT is designed to work on:
+SLIMER-IT is an Italian specialized version of SLIMER, an instruction-tuned LLM specifically designed to work on:
 
 &nbsp;&nbsp;&nbsp;&nbsp;✅ Out-Of-Domain inputs (e.g. news, science, politics, music ...)
 
