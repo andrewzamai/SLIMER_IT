@@ -76,16 +76,15 @@ pip install -r ./requirements.txt
 
 Evaluate SLIMER-IT w/ D&G on KIND and Multinerd-IT datasets
 ```
-PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py <merged_model_name> <template_name> --with_guidelines
+# evaluate_vLLM.py <merged_model_name> <template_name> --with_guidelines
 e.g. PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py expertai/LLaMAntino-3-SLIMER-IT llama3_italian --with_guidelines
 ```
 
 Train, merge, evaluate your SLIMER:
 ```
 # 1) train SLIMER-IT on KIND's WikiNews dataset with Definition and Guidelines, 3 NEs, all samples per NE
-# change path to your training_config 
-PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py <traininig_config_name> [--with_guidelines] <number_NEs> <number_pos_samples_per_NE> <number_neg_samples_per_NE>
-e.g. PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py llama3_4_NER_XDef_NsamplesPerNE.yml --with_guidelines 3 -1 -1
+# finetune_sft.py <traininig_config_name> [--with_guidelines] <number_NEs> <number_pos_samples_per_NE> <number_neg_samples_per_NE>
+PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py llama3_4_NER_XDef_NsamplesPerNE.yml --with_guidelines 3 -1 -1
 
 # 2) merge LORA weights
 PYTHONPATH=$(pwd) python src/SFT_finetuning/commons/merge_lora_weights.py <base_model_name> 3 -1 -1 --with_guidelines
@@ -96,13 +95,13 @@ PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py <merged_
 
 ## Run it on your NER data!
 
-Running SLIMER on your data is simple as:
+Running SLIMER-IT on your data is simple as:
 
 1) implement *load_datasetdict_BIO()* (tell where and how to load your NER data), *get_map_to_extended_NE_name()* (e.g. PER-->PERSON) of **Data_Interface** abstract class
    
 2) provide your Definition and Guidelines for each NE class
    
-3) run SLIMER!
+3) run SLIMER-IT!
 
 ## Demo usage
 
