@@ -74,21 +74,24 @@ pip install -r ./requirements.txt
 
 ## Running
 
-Evaluate SLIMER w/ D&G on MIT/CrossNER/BUSTER
+Evaluate SLIMER-IT w/ D&G on KIND and Multinerd-IT datasets
 ```
-PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py expertai/SLIMER --with_guidelines
+PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py <merged_model_name> <template_name> --with_guidelines
+e.g. PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py expertai/LLaMAntino-3-SLIMER-IT llama3_italian --with_guidelines
 ```
 
 Train, merge, evaluate your SLIMER:
 ```
-# 1) train on PileNER-subset with Definition and Guidelines, 391 NEs, 5 samples per NE
-PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py 391 5 5 --with_guidelines
+# 1) train SLIMER-IT on KIND's WikiNews dataset with Definition and Guidelines, 3 NEs, all samples per NE
+# change path to your training_config 
+PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py <traininig_config_name> [--with_guidelines] <number_NEs> <number_pos_samples_per_NE> <number_neg_samples_per_NE>
+e.g. PYTHONPATH=$(pwd) python src/SFT_finetuning/training/finetune_sft.py llama3_4_NER_XDef_NsamplesPerNE.yml --with_guidelines 3 -1 -1
 
 # 2) merge LORA weights
-PYTHONPATH=$(pwd) python src/SFT_finetuning/commons/merge_lora_weights.py 391 5 5 --with_guidelines
+PYTHONPATH=$(pwd) python src/SFT_finetuning/commons/merge_lora_weights.py <base_model_name> 3 -1 -1 --with_guidelines
 
-# 3) evaluate SLIMER model on MIT/CrossNER/BUSTER
-PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py LLaMA2_7B_5pos_5neg_perNE_top391NEs_TrueDef --with_guidelines
+# 3) evaluate SLIMER model
+PYTHONPATH=$(pwd) python src/SFT_finetuning/evaluating/evaluate_vLLM.py <merged_model_name> <template_name> --with_guidelines
 ```
 
 ## Run it on your NER data!
