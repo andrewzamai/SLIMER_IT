@@ -54,21 +54,25 @@ if __name__ == "__main__":
     login(token=HF_ACCESS_TOKEN)
 
     #base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
-    base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    #base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
     #base_model = "meta-llama/Meta-Llama-3-8B"
     # as it is the code requires namespace/model_name format only, no more subfolders
-    print(f"Base model for merging: {base_model}")
 
     parser = argparse.ArgumentParser(description='''Llama3 merger parser''')
     # adding arguments
+    parser.add_argument("base_model", type=str, help="e.g. swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA")
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
     parser.add_argument('number_pos_samples_per_NE', type=int, help='Number of positive samples per NE')
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
-    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
-    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT2"
+
+    base_model = args.base_model
+    print(f"Base model for merging: {base_model}")
+
+    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
+    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
     merge_main(base_model, path_to_lora, save_model_at)
 
     """

@@ -291,10 +291,10 @@ if __name__ == "__main__":
     HF_ACCESS_TOKEN = get_HF_access_token('./.env')
     login(token=HF_ACCESS_TOKEN)
 
-    # with_guidelines, number_NEs, number_pos_samples_per_NE, number_neg_samples_per_NE
     # use number_NEs=-1 to use all tags
-    parser = argparse.ArgumentParser(description='''Train-dataset constructor for NER Instuction-Tuning - same instructions''')
+    parser = argparse.ArgumentParser(description='''Train-dataset constructor for SLIMER-IT Instuction-Tuning''')
     # adding arguments
+    parser.add_argument("traininig_config_name", type=str, help="Training hyperparameters")
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
     parser.add_argument('number_pos_samples_per_NE', type=int, help='Number of positive samples per NE')
@@ -303,6 +303,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print("Train dataset will be constructed with the following specifications:")
+    print("traininig_config_name:", args.traininig_config_name)
     print("with_guidelines:", args.with_guidelines)
     print("number_NEs:", args.number_NEs)
     print("number_pos_samples_per_NE:", args.number_pos_samples_per_NE)
@@ -331,7 +332,8 @@ if __name__ == "__main__":
             dataset.to_json(f"./datasets/KIND/SLIMER/{dataset_name}/{split_name}.jsonl")
 
     # now loading training config from yml and overriding some variables like dataset name and output_dir
-    path_to_training_config = './src/SFT_finetuning/training_config/llama3_4_NER_XDef_NsamplesPerNE.yml'
+    # llama3_4_NER_XDef_NsamplesPerNE.yml
+    path_to_training_config = f'./src/SFT_finetuning/training_config/{args.traininig_config_name}'
     with open(path_to_training_config, 'rb') as f:
         configs = yaml.safe_load(f.read())
 
