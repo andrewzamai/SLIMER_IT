@@ -461,7 +461,8 @@ class Data_Interface(ABC):
                             dataset_dict_SLIMER_PARALLEL[split_name].append({
                                 "input": " ".join(chunk['tokens']),
                                 "instruction": instruction,
-                                "output": json.dumps(json_output, indent=2)
+                                "output": json.dumps(json_output, indent=2),
+                                "doc_tag_pairID": sample_BIO['id']
                             })
                     pbar.update(1)
 
