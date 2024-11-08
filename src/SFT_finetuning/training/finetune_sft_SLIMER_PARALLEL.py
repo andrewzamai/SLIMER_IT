@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
     path_to_KIND_BIO = './datasets/KIND/evalita-2023'
     if with_guidelines:
-        path_to_KIND_guidelines = './src/def_and_guidelines/KIND.jsonl'
+        path_to_KIND_guidelines = './src/def_and_guidelines/KIND.json'
     dataset_KIND_manager = KIND(path_to_KIND_BIO,
                                 path_to_templates='./src/templates',
                                 SLIMER_prompter_name='SLIMER_PARALLEL_instruction_it',
