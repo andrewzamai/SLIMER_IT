@@ -27,7 +27,9 @@ import re
 import uniNER_official_eval_script
 
 # my libraries
-from src.data_handlers import KIND, Multinerd_it
+from src.data_handlers.KIND import KIND
+from src.data_handlers.Multinerd_it import Multinerd_it
+
 from src.SFT_finetuning.commons.prompter import Prompter
 from src.SFT_finetuning.evaluating.eval_utils import filter_by_prefix
 
