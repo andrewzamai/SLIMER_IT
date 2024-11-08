@@ -1,5 +1,5 @@
 {
     "description": "SLIMER PARALLEL extraction - Italian",
-    "with_DeG": "Estrai le entità di tipo {ne_tags} dal testo che hai letto. Tieni conto che non tutte queste entità sono necessariamente presenti. Non estrarre quindi entità che non esistono nel testo, restituisci invece un elenco vuoto per quella classe. Assicurati che ogni entità sia assegnata ad una e una sola classe appropriata\nPer aiutarti, ti vengono forniti una definizione e delle linee guida per ogni tipo di entità.\n{Def_e_Guidelines}\nRestituisci solo un JSON. Il JSON deve seguire rigorosamente questo formato:\n{expected_json_format}.\nNon restituire nient'altro, solo il JSON.",
+    "with_DeG": "Estrai le entità di tipo {ne_tags} dal testo che hai letto. Tieni conto che non tutte queste entità sono necessariamente presenti. Non estrarre quindi entità che non esistono nel testo, restituisci invece un elenco vuoto per quella classe. Assicurati che ogni entità sia assegnata ad una e una sola classe appropriata\nPer aiutarti, ti vengono forniti una definizione e delle linee guida per ogni tipo di entità.\n{Def_and_Guidelines}\nRestituisci solo un JSON. Il JSON deve seguire rigorosamente questo formato:\n{expected_json_format}.\nNon restituire nient'altro, solo il JSON.",
     "without_DeG": ""
 }

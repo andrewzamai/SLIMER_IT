@@ -3,7 +3,7 @@ base_model: swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA
 
 prompt_template_name: LLaMA3-chat-NOheaders  # NO HEADERS input-instruction prompter
 # dataset (instruction, input, output) columns
-system_message: Sei un utile assistente per il riconoscimento di entità nel testo istruito per restituire JSON.
+system_message: Sei un utile assistente per il riconoscimento di entità nel testo, istruito per restituire JSON.
 data_path: None
 val_data_path: None
 select_train_portion: -1
