@@ -88,6 +88,9 @@ def load_or_build_dataset_SLIMER_format(
     path_to_guidelines = None
     if with_definition:
         path_to_guidelines = f"./src/def_and_guidelines/{datasets_cluster_name}.json"
+
+    print(data_handler)
+    print(type(data_handler))
     dataset_manager = data_handler(
         path_to_BIO,
         path_to_templates="./src/templates",
