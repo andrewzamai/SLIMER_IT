@@ -1,8 +1,5 @@
-
-
 def tokenize(tokenizer, prompt, max_seq_len, add_eos_token=True, add_special_tokens=True):
     # there's probably a way to do this with the tokenizer settings
-    # but again, gotta move fast
     result = tokenizer(
         prompt,
         truncation=True,
@@ -32,7 +29,6 @@ def generate_and_tokenize_prompt(data_point, tokenizer, prompter, cutoff_len, tr
             data_point["output"],
         )
         tokenized_full_prompt = tokenize(tokenizer, full_prompt, cutoff_len)
-
     else:
         truncated_input = ''
         if "input" in data_point and data_point["input"]:
@@ -55,6 +51,57 @@ def generate_and_tokenize_prompt(data_point, tokenizer, prompter, cutoff_len, tr
 
     return tokenized_full_prompt
 
+def generate_and_tokenize_prompt_v2(data_point, tokenizer, prompter, cutoff_len, train_on_inputs=False):
+    """
+    An improved implementation which frames the conversation using tokenizer's apply_chat_template
+    """
+    conversation = [
+        {"role": "system", "content": data_point["system_message"]},
+        {"role": "user", "content": prompter.generate_prompt(input=data_point["input"], instruction=data_point["instruction"])},  # the input_text + instruction
+        {"role": "assistant", "content": data_point["output"]}
+    ]
+
+    # Apply chat template for the full conversation
+    full_conversation_tokenized = tokenizer.apply_chat_template(
+        conversation=conversation,  # Use full conversation for training
+        tokenize=True,
+        truncation=True,
+        padding=False,
+        max_length=cutoff_len,
+        add_generation_prompt=False,  # Do not add generation prompt
+        return_tensors=None,  # Return as plain token IDs
+        return_dict=True
+    )
+
+    # ensure EOS token id
+    if full_conversation_tokenized["input_ids"][-1] != tokenizer.eos_token_id:
+        full_conversation_tokenized["input_ids"].append(tokenizer.eos_token_id)
+        full_conversation_tokenized["attention_mask"].append(1)
+
+    if train_on_inputs:
+        full_conversation_tokenized["labels"] = full_conversation_tokenized["input_ids"].copy()
+    else:
+        prompt = tokenizer.apply_chat_template(
+            conversation=conversation[:-1],  # exclude last assistant message
+            tokenize=True,
+            truncation=True,
+            padding=False,
+            max_length=cutoff_len,
+            add_generation_prompt=True,  # start the assistant response for continuation
+            return_tensors=None,
+            return_dict=True
+        )["input_ids"]
+
+        # Remove the last token if it is an eos token
+        if prompt[-1] == tokenizer.eos_token_id:
+            prompt = prompt[:-1]
+
+        full_conversation_tokenized["labels"] = full_conversation_tokenized["input_ids"].copy()
+        for i in range(len(prompt)):
+            full_conversation_tokenized["labels"][i] = -100
+        # full_conversation_tokenized["labels"] = [-100] * len(prompt) + full_conversation_tokenized["input_ids"][len(prompt):]
+
+    return full_conversation_tokenized
 
 def truncate_input(data_point, tokenizer, prompter, cutoff_len):
     """

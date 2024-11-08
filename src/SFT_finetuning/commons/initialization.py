@@ -1,14 +1,19 @@
-__package__ = "SFT_finetuning.commons"
-
-import sys
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, T5ForConditionalGeneration
-from peft import PeftModel
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    AutoConfig,
+    T5ForConditionalGeneration
+)
 from peft import (
+    PeftModel,
     LoraConfig,
     get_peft_model,
     prepare_model_for_kbit_training
 )
+
+import logging
+import torch
+import sys
 
 
 def get_HF_access_token(path_to_env_file):
@@ -30,21 +35,34 @@ def init_model(base_model, **kwargs):
     device_map = kwargs.get("device_map", "auto")
     use_flash_attention = kwargs.get("use_flash_attention", False)
     lora_weights = kwargs.get("lora_weights", '')
-    padding_side = kwargs.get("padding_side", "right")
+    padding_side = kwargs.get("padding_side", "left")
 
-    # assert not use_flash_attention or "llama" in base_model, "Cannot use flash attention in a non llama architecture"
-
-    # if use_flash_attention and torch.cuda.get_device_capability()[0] >= 8:
-    #     from elmi.commons.llama_patch import replace_attn_with_flash_attn
-    #     print("Using flash attention")
-    #     replace_attn_with_flash_attn()
-
-    # added cache_dir
     # added padding_side
-    tokenizer = AutoTokenizer.from_pretrained(base_model, padding_side=padding_side, trust_remote_code=True, cache_dir='./hf_cache_dir')
+    # usually left for generative LLMs
+    tokenizer = AutoTokenizer.from_pretrained(base_model, padding_side=padding_side, trust_remote_code=True)
 
-    config = AutoConfig.from_pretrained(base_model, trust_remote_code=True, cache_dir='./hf_cache_dir')
+    config = AutoConfig.from_pretrained(base_model, trust_remote_code=True)
     config.update({"max_seq_len": cutoff_len})
+
+    """
+    if "llama" in base_model and use_flash_attention:
+        from src.SFT_finetuning.commons.patch_models.modeling_flash_llama import LlamaForCausalLM as LlamaForCausalLMFlash
+        logging.warning("Using Flash Attention for LLaMA model.")
+        load_fn = LlamaForCausalLMFlash
+    else:
+        logging.warning("Unable to use Flash Attention.")
+        load_fn = AutoModelForCausalLM
+    
+    model = load_fn.from_pretrained(
+        base_model,
+        config=config,
+        load_in_8bit=load_8bit,
+        load_in_4bit=load_4bit,
+        torch_dtype=torch.bfloat16,
+        device_map=device_map,
+        trust_remote_code=True
+    )
+    """
 
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
@@ -54,25 +72,17 @@ def init_model(base_model, **kwargs):
         torch_dtype=torch.bfloat16,
         device_map=device_map,
         trust_remote_code=True,
-        use_flash_attention_2=use_flash_attention,
-        cache_dir='./hf_cache_dir'
+        attn_implementation="flash_attention_2" if use_flash_attention else "sdpa"
     )
 
-    # if use_flash_attention:
-    #     from elmi.commons.llama_patch import forward
-    #     assert model.model.layers[
-    #                0].self_attn.forward.__doc__ == forward.__doc__, "Model is not using flash attention"
-
-    tokenizer.pad_token_id = (
-        0  # unk. we want this to be different from the eos token
-    )
-
-    # todo add here fixes for other kind of models, if any
-
-    if "llama" in base_model:
+    if "Llama-2" in base_model:
+        print("\nSetting LLaMA pad_token_id to <unk>")
         model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
         model.config.bos_token_id = 1
         model.config.eos_token_id = 2
+    elif "Llama-3" in base_model:
+        model.config.pad_token_id = tokenizer.pad_token_id = tokenizer.eos_token_id
+        model.generation_config.pad_token_id = tokenizer.pad_token_id
 
     if lora_weights:
         print("\nLoading Lora weights...\n")
@@ -118,10 +128,6 @@ def wrap_model_for_peft(model, **kwargs):
         task_type="CAUSAL_LM",
     )
     model = get_peft_model(model, config)
-
-    # if use_flash_attention:
-    #     from elmi.commons.llama_patch import upcast_layer_for_flash_attention
-    #     model = upcast_layer_for_flash_attention(model, torch_dtype=torch.bfloat16)
 
     return model
 

@@ -5,10 +5,9 @@ import sys
 import time
 import shutil
 import argparse
-
-# my libraries
 from huggingface_hub import login
 from src.SFT_finetuning.commons.initialization import get_HF_access_token, init_model
+
 
 def merge_main(
     base_model: str = "meta-llama/Llama-2-7b-chat-hf",
@@ -50,40 +49,33 @@ if __name__ == "__main__":
     print("Merged Began")
     sys.stdout.flush()
 
-    HF_ACCESS_TOKEN = get_HF_access_token('./.env')
-    login(token=HF_ACCESS_TOKEN)
+    #HF_ACCESS_TOKEN = get_HF_access_token('./.env')
+    #login(token=HF_ACCESS_TOKEN)
 
-    #base_model = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA"
-    #base_model = "meta-llama/Meta-Llama-3-8B-Instruct"
-    #base_model = "meta-llama/Meta-Llama-3-8B"
+    base_model = "meta-llama/Llama-2-7b-chat-hf"
     # as it is the code requires namespace/model_name format only, no more subfolders
 
-    parser = argparse.ArgumentParser(description='''Llama3 merger parser''')
+    parser = argparse.ArgumentParser(description='''Llama merger parser''')
     # adding arguments
-    parser.add_argument("base_model", type=str, help="e.g. swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA")
     parser.add_argument('--with_guidelines', action='store_true', help='Whether to use guidelines')
     parser.add_argument('number_NEs', type=int, help='Number of NEs')
     parser.add_argument('number_pos_samples_per_NE', type=int, help='Number of positive samples per NE')
     parser.add_argument('number_neg_samples_per_NE', type=int, help='Number of negative samples per NE')
     # parsing arguments
     args = parser.parse_args()
+    path_to_lora = f"./trained_models/LLaMA2_7B_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def"
+    save_model_at = f"./merged_models/LLaMA2_7B_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def"
 
-    base_model = args.base_model
-    print(f"Base model for merging: {base_model}")
-
-    path_to_lora = f"./trained_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
-    save_model_at = f"./merged_models/{base_model.split('/')[-1]}_{args.number_pos_samples_per_NE}pos_{args.number_neg_samples_per_NE}neg_perNE_top{args.number_NEs}NEs_{args.with_guidelines}Def-IT"
     merge_main(base_model, path_to_lora, save_model_at)
+
+    """ PUSH TO HF HUB """
 
     """
     from huggingface_hub import create_repo, upload_folder
-    from src.SFT_finetuning.commons.initialization import get_HF_access_token
+    from SFT_finetuning.commons.initialization import get_HF_access_token
 
-    HF_ACCESS_TOKEN = get_HF_access_token('./.env')
-    login(token=HF_ACCESS_TOKEN)
+    new_repo_name = f"xxxx/{save_model_at.split('/')[-1]}"
 
-    new_repo_name = f"expertai/modelName-SLIMER-IT"
-    
     url_new_repo_name = create_repo(
         repo_id=new_repo_name,
         token=HF_ACCESS_TOKEN,
@@ -94,6 +86,7 @@ if __name__ == "__main__":
 
     print(url_new_repo_name)
 
+    
     uploaded_folder_results = upload_folder(
         folder_path=save_model_at,
         repo_id=new_repo_name,
@@ -104,5 +97,4 @@ if __name__ == "__main__":
     print(uploaded_folder_results)
 
     print("Merged and pushed to HF hub :)\n\n")
-
     """

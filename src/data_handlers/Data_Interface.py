@@ -12,8 +12,8 @@ __package__ = "SLIMER_IT.src.data_handlers"
 from abc import ABC, abstractmethod
 from datasets import Dataset, DatasetDict
 from collections import OrderedDict
+from typing import List, Dict, Union
 from tqdm import tqdm
-from typing import Union
 import numpy as np
 import random
 import math
@@ -22,7 +22,7 @@ import os
 import re
 
 # SLIMER prompter to format a ne_tag, Def and Guidelines into a prompt for NER
-from src.SLIMER_Prompter import SLIMER_Prompter
+from src.SLIMER_Prompter import SLIMER_Prompter, SLIMER_PARALLEL_instruction_prompter
 
 class Data_Interface(ABC):
 
@@ -378,6 +378,151 @@ class Data_Interface(ABC):
         print(not_enough_sentences)
 
         return sentences_per_ne_type
+
+    def convert_dataset_for_SLIMER_PARALLEL(
+            self,
+            exclude_misc=True,
+            mask_labels=False,
+            max_tagNames_per_prompt=5,
+            input_chunking_window=900,
+            chunking_overlap=15):
+        # convert Dataset from BIO labelling to SLIMER-PARALLEL format
+        # columns: id, input, instruction (with D&G if path_to_DeG provided) and output json of gold answers
+        dataset_dict_SLIMER_PARALLEL = {split: [] for split in self.datasetdict_BIO.keys()}
+        if self.path_to_DeG:
+            DeG_per_NEs = self.load_DeG_per_NEs()
+
+        slimer_prompter = SLIMER_PARALLEL_instruction_prompter('SLIMER_PARALLEL_instruction_it', self.path_to_templates)
+
+        # Calculate the total number of samples for tqdm progress bar
+        total_samples = sum(len(dataset_BIO) for dataset_BIO in self.datasetdict_BIO.values())
+
+        with tqdm(total=total_samples, desc="Converting dataset to SLIMER-PARALLEL") as pbar:
+            for split_name, dataset_BIO in self.datasetdict_BIO.items():
+                for sample_BIO in dataset_BIO:
+
+                    chunks = self.chunk_document_with_sliding_window(sample_BIO['tokens'], sample_BIO['labels'], window_size=input_chunking_window, overlap=chunking_overlap)
+
+                    map_to_extended_NE_name = self.get_map_to_extended_NE_name()
+
+                    for chunk in chunks:
+
+                        # parse chunk BIO labels to extract NE occurrences
+                        sample_gold_spans_per_ne = self.extract_gold_spans_per_ne_category(chunk)
+                        if 'misc' in sample_gold_spans_per_ne and exclude_misc:
+                            sample_gold_spans_per_ne.pop('misc')
+
+                        full_tagNames_list = list(sample_gold_spans_per_ne.keys())
+
+                        for this_sample_labels in self.chunk_labels(full_tagNames_list, max_tagNames_per_prompt):
+                            json_output = {}
+                            tagNames_list = []
+                            def_and_guidelines = {}
+                            for l in this_sample_labels:
+                                tagNames_list.append(map_to_extended_NE_name[l].upper())
+                                def_and_guidelines[map_to_extended_NE_name[l].upper()] = DeG_per_NEs[l]['gpt_answer']
+                                json_output[map_to_extended_NE_name[l].upper()] = [x[0] for x in sample_gold_spans_per_ne[l]]
+
+                            if mask_labels:
+                                # tagNames masking with LABEL-id
+                                tag_to_LABEL_dict = {}
+                                label_ID = 0
+                                for l in tagNames_list:
+                                    tag_to_LABEL_dict[l] = f"LABEL_{label_ID}"
+                                    label_ID += 1
+
+                                tagNames_list = sorted(tag_to_LABEL_dict.values())
+                                # print(tag_to_LABEL_dict)
+                                for original_tag, mask_word in tag_to_LABEL_dict.items():
+                                    # print(def_and_guidelines)
+                                    if original_tag != mask_word:
+                                        this_tag_DeG = def_and_guidelines.pop(original_tag)
+                                        # Use regex with word boundaries to ensure exact matches are replaced
+                                        this_tag_DeG['Definition'] = re.sub(rf'\b{re.escape(original_tag)}\b',
+                                                                            mask_word,
+                                                                            this_tag_DeG['Definition'],
+                                                                            flags=re.IGNORECASE)
+                                        this_tag_DeG['Guidelines'] = re.sub(rf'\b{re.escape(original_tag)}\b',
+                                                                            mask_word,
+                                                                            this_tag_DeG['Guidelines'],
+                                                                            flags=re.IGNORECASE)
+
+                                        def_and_guidelines[mask_word] = this_tag_DeG
+
+                                        json_output[mask_word] = json_output.pop(original_tag)
+
+                                json_output = dict(sorted(json_output.items()))
+
+                            instruction = slimer_prompter.generate_prompt(
+                                ne_tags=", ".join(tagNames_list),
+                                def_and_guidelines=json.dumps(def_and_guidelines, indent=2),
+                                expected_json_format=json.dumps({k: [] for k in json_output.keys()}, indent=2))
+
+                            dataset_dict_SLIMER_PARALLEL[split_name].append({
+                                "input": " ".join(chunk['tokens']),
+                                "instruction": instruction,
+                                "output": json.dumps(json_output, indent=2)
+                            })
+                    pbar.update(1)
+
+        return DatasetDict({split: Dataset.from_list(values) for split, values in dataset_dict_SLIMER_PARALLEL.items()})
+
+    def chunk_labels(self, lst, N):
+        """Yield successive N-sized labels from lst. If N is -1, yield the entire list."""
+        if N == -1:
+            yield lst
+        else:
+            for i in range(0, len(lst), N):
+                yield lst[i:i + N]
+
+    def chunk_document_with_sliding_window(
+            self,
+            words: List[str],
+            labels: List[str],
+            window_size: int = 900,
+            overlap: int = 15
+    ) -> List[Dict[str, List[str]]]:
+        """
+        Splits a list of words and corresponding labels into chunks of specified window size with overlapping words.
+
+        Args:
+            words (List[str]): The input list of words (tokens).
+            labels (List[str]): The corresponding BIO labels for the words.
+            window_size (int): The length of each chunk. Default is 900 words.
+            overlap (int): The number of overlapping words between chunks. Default is 15.
+
+        Returns:
+            List[Dict[str, List[str]]]: A list of dictionaries, each containing "tokens" and "labels".
+        """
+
+        if window_size == -1:
+            return [{
+                "tokens": words,
+                "labels": labels
+            }]
+
+        chunks = []
+        start = 0
+        end = window_size
+
+        while start < len(words):
+            chunk_words = words[start:end]
+            chunk_labels = labels[start:end]
+            # Create a dictionary for the chunk
+            chunk = {
+                "tokens": chunk_words,
+                "labels": chunk_labels
+            }
+            chunks.append(chunk)
+            # Move the sliding window forward
+            start += window_size - overlap
+            end += window_size - overlap
+
+        # Discard the last chunk if it contains fewer than 20 tokens
+        if len(chunks[-1]["tokens"]) < 20:
+            chunks = chunks[:-1]
+
+        return chunks
 
     """ ---------- additional functions to act as interface to other SOTA approaches ---------- """
 

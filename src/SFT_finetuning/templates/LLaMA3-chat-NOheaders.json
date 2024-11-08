@@ -1,0 +1,4 @@
+{
+    "description": "Template for LLaMA3 in Italian",
+    "prompt_input": "Ti viene fornito un input di testo (delimitato da tre virgolette) e un'istruzione.\nLeggi il testo e rispondi all'istruzione alla fine.\n\"\"\"\n{input}\n\"\"\"\nIstruzione: {instruction}",
+}

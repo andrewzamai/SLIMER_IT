@@ -58,53 +58,105 @@ class Prompter(object):
         return output.split(self.template["response_split"])[1].strip()
 
 
+class SLIMER_instruction_prompter(object):
+
+    __slots__ = ("template", "template_path", "_verbose")
+
+    def __init__(self, template_name: str = "", template_path: str = "templates", verbose: bool = True):
+        self._verbose = verbose
+        if not template_name:
+            template_name = "SLIMER_instruction_template"
+        file_name = osp.join(template_path, f"{template_name}.json")
+        if not osp.exists(file_name):
+            raise ValueError(f"Can't read {file_name}")
+        with open(file_name) as fp:
+            self.template = json.load(fp)
+        if self._verbose:
+            print(f"Using prompt template {template_name}: {self.template['description']}\n")
+
+    def generate_prompt(
+        self,
+        ne_tag: str,
+        definition: Union[None, str] = None,
+        guidelines: Union[None, str] = None
+    ) -> str:
+        if definition and guidelines:
+            res = self.template["with_DeG"].replace(
+                "{ne_tag}", ne_tag).replace(
+                "{definition}", definition).replace(
+                "{guidelines}", guidelines)
+        else:
+            res = self.template["without_DeG"].format(
+                ne_tag=ne_tag
+            )
+        return res
+
+class SLIMER_PARALLEL_instruction_prompter(object):
+
+    __slots__ = ("template", "template_path", "_verbose")
+
+    def __init__(self, template_name: str = "", template_path: str = "templates", verbose: bool = True):
+        self._verbose = verbose
+        if not template_name:
+            template_name = "SLIMER_PARALLEL_instruction_template"
+        file_name = osp.join(template_path, f"{template_name}.json")
+        if not osp.exists(file_name):
+            raise ValueError(f"Can't read {file_name}")
+        with open(file_name) as fp:
+            self.template = json.load(fp)
+        if self._verbose:
+            print(f"Using prompt template {template_name}: {self.template['description']}\n")
+
+    def generate_prompt(
+        self,
+        ne_tags: str,
+        def_and_guidelines: Union[None, str] = None,
+        expected_json_format: Union[None, str] = None
+    ) -> str:
+        if def_and_guidelines:
+            res = self.template["with_DeG"].replace(
+                "{ne_tags}", ne_tags).replace(
+                "{Def_and_Guidelines}", def_and_guidelines).replace(
+                "{expected_json_format}", expected_json_format
+            )
+        else:
+            res = self.template["without_DeG"].format(
+                ne_tags=ne_tags
+            )
+        return res
+
+
 if __name__ == '__main__':
 
-    #from src.data_handlers.KIND import KIND
+    prompt = SLIMER_instruction_prompter("SLIMER_instruction_template", template_path="../templates").generate_prompt(ne_tag='person', definition='Questa è la definizione.', guidelines="Queste sono linee guida.")
+    print(json.dumps(prompt))
+    print(prompt)
+
+    """
     from datasets import load_dataset
-    #path_to_dataset = "../../../datasets/Multinerd_it/SLIMER/test.jsonl"
-    #data = load_dataset("json", data_files=path_to_dataset)
-
-    from src.data_handlers.Multinerd_it import Multinerd_it
-    path_to_BIO = '../../../datasets/Multinerd_it'
-
-    Multinerd_it_manager = Multinerd_it(path_to_BIO,
-                                        path_to_templates='../../templates/',
-                                        SLIMER_prompter_name='SLIMER_instruction_it',
-                                        test_only=True,
-                                        path_to_DeG='../../def_and_guidelines/Multinerd_it.json')
-
-    data = Multinerd_it_manager.dataset_dict_SLIMER
-
-    samples = data['test']
-    for sample in samples:
-        if sample['tagName'] == 'MYTH':
-            prompt = Prompter("llama3_italian", template_path="../templates").generate_prompt(
-                instruction=sample['instruction'],
-                input=sample['input'],
-                label=sample['output'])
-
-            print(prompt)
-
-            print(json.dumps(prompt))
-            break
+    path_to_dataset = "../../../data/pileNER/5pos_5neg_perNE_top391NEs_TrueDef/train.jsonl"
+    data = load_dataset("json", data_files=path_to_dataset)
+    sample = data['train'][1]
 
     """
-    from transformers import AutoTokenizer
+    from src.data_handlers import data_handler_pileNER
+    data = data_handler_pileNER.convert_MIT_CrossNER_test_sets_for_SLIMER_inference(
+        'ai',
+        '../../../data/eval_data_UniNER/test_data/CrossNER_AI.json',
+        path_to_NE_guidelines_json='../../data_handlers/questions/crossNER/gpt_guidelines/ai_NE_definitions.json',
+        with_definition=True
+    )
+    sample = data[9]
 
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token="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")
-    average_prompt_length = 0
-    for i in range(1):
-        sample = data['train'][i]
-        prompt = Prompter("reverse_INST", template_path="../templates").generate_prompt(instruction=sample['instruction'], input=sample['input'], label=sample['output'])
-        print(prompt)
+    prompt = Prompter("LLaMA2-chat", template_path="../templates").generate_prompt(
+        instruction=sample['instruction'],
+        input=sample['input'],
+        label=sample['output']
+    )
 
-        # print(len(prompt.split()))
-        n_tokens = len(tokenizer(prompt)['input_ids'])
-        average_prompt_length += n_tokens
+    print(json.dumps(prompt))
+    #print(prompt)
 
-    print(f"\nAverage n tokens: {average_prompt_length/1000}")
-    """
 
 
 
