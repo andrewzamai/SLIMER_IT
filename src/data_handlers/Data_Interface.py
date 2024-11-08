@@ -420,7 +420,7 @@ class Data_Interface(ABC):
                             def_and_guidelines = {}
                             for l in this_sample_labels:
                                 tagNames_list.append(map_to_extended_NE_name[l].upper())
-                                def_and_guidelines[map_to_extended_NE_name[l].upper()] = DeG_per_NEs[l]['gpt_answer']
+                                def_and_guidelines[map_to_extended_NE_name[l].upper()] = DeG_per_NEs[l]['gpt_DeG']
                                 json_output[map_to_extended_NE_name[l].upper()] = [x[0] for x in sample_gold_spans_per_ne[l]]
 
                             if mask_labels:
