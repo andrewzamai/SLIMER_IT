@@ -1,7 +1,7 @@
 """
 Universal-NER official evaluation script from https://github.com/universal-ner/universal-ner/tree/main/src/eval
 
-For each document-query samplem, the list of pred answers is compared with the list of gold answers
+For each document-query sample, the list of pred answers is compared with the list of gold answers
 
 1. both inputs (preds and golds) are assumed to be JSON dumped lists json.dumps(list)
 2. for both the enclosing [] brakets are searched and then json.load is performed
@@ -9,11 +9,10 @@ For each document-query samplem, the list of pred answers is compared with the l
 4. comparison is performed using == between strings BUT in parser function a SET of preds and golds is constructed,
     thus we compute scores on SET of unique normalized strings
 
-Because SETs of pred and gold lists are compared, the support of each NE is different from original BIO-labeling
+Because SETs of pred and gold lists are compared, the support of each NE may be different from original BIO-labeling
 
 In Zero-shot evaluation this metric relaxation may help for better evaluation of what is able to hit,
-without penalizing not returning all occurrences for a same NE span
-
+without penalizing not returning all occurrences for a same NE text span
 """
 
 import re
@@ -40,12 +39,16 @@ def normalize_answer(s):
 
 def parser(text):
     try:
-        match = re.match(r'\[(.*?)\]', text)
-        if match:
-            text = match.group()
+        if not isinstance(text, list):
+            match = re.match(r'\[(.*?)\]', text)
+            if match:
+                text = match.group()
+            else:
+                text = '[]'
+            items = json.loads(text)
         else:
-            text = '[]'
-        items = json.loads(text)
+            items = text
+
         formatted_items = []
         for item in items:
             if isinstance(item, list) or isinstance(item, tuple):
@@ -55,6 +58,7 @@ def parser(text):
             if item not in formatted_items:
                 formatted_items.append(item)
         return formatted_items
+
     except Exception:
         return []
 
@@ -184,7 +188,7 @@ def main(
     golds = [example['conversations'][-1]['value'] for example in examples]
     outputs = inference(llm, examples)
 
-    eval_result = NEREvaluator().evaluate(outputs, golds)
+    eval_result = SLIMGNEREvaluator().evaluate(outputs, golds)
     print(f'Precision: {eval_result["precision"]}, Recall: {eval_result["recall"]}, F1: {eval_result["f1"]}')
 
 if __name__ == "__main__":
