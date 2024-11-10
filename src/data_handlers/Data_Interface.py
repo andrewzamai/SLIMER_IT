@@ -37,6 +37,7 @@ class Data_Interface(ABC):
         """
         self.path_to_BIO = path_to_BIO
         self.path_to_templates = path_to_templates
+        self.SLIMER_prompter_name = SLIMER_prompter_name
         self.datasetdict_BIO = self.load_datasetdict_BIO(path_to_BIO, test_only)
         self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
         self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates) if path_to_templates else None
@@ -383,16 +384,17 @@ class Data_Interface(ABC):
             self,
             exclude_misc=True,
             mask_labels=False,
-            max_tagNames_per_prompt=5,
+            max_tagNames_per_prompt=-1,
             input_chunking_window=900,
-            chunking_overlap=15):
+            chunking_overlap=15
+    ):
         # convert Dataset from BIO labelling to SLIMER-PARALLEL format
         # columns: id, input, instruction (with D&G if path_to_DeG provided) and output json of gold answers
         dataset_dict_SLIMER_PARALLEL = {split: [] for split in self.datasetdict_BIO.keys()}
         if self.path_to_DeG:
             DeG_per_NEs = self.load_DeG_per_NEs()
 
-        slimer_prompter = SLIMER_PARALLEL_instruction_prompter('SLIMER_PARALLEL_instruction_it', self.path_to_templates)
+        slimer_prompter = SLIMER_PARALLEL_instruction_prompter(self.SLIMER_prompter_name, self.path_to_templates)
 
         # Calculate the total number of samples for tqdm progress bar
         total_samples = sum(len(dataset_BIO) for dataset_BIO in self.datasetdict_BIO.values())
@@ -519,8 +521,8 @@ class Data_Interface(ABC):
             start += window_size - overlap
             end += window_size - overlap
 
-        # Discard the last chunk if it contains fewer than 20 tokens
-        if len(chunks[-1]["tokens"]) < 20:
+        # Discard the last chunk if it contains fewer than 20 tokens, only if not only
+        if len(chunks) > 1 and len(chunks[-1]["tokens"]) < 20:
             chunks = chunks[:-1]
 
         return chunks

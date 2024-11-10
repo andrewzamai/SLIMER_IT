@@ -154,7 +154,7 @@ if __name__ == '__main__':
     vllm_model = LLM(
         model=args.merged_model_name,
         max_model_len=cutoff_len + max_new_tokens,
-        tensor_parallel_size=1
+        tensor_parallel_size=4
     )
     tokenizer = vllm_model.get_tokenizer()
 
@@ -247,7 +247,15 @@ if __name__ == '__main__':
 
             print("\nMetrics per NE category (100%):\n")
             this_dataset_metrics = {}
+
+            if data['datasets_cluster_name'] == "Multinerd_it":
+                to_discard_NEs = ["BIO", "PER", "ORG", "LOC"]
+                for x in to_discard_NEs:
+                    all_gold_answers_per_type.pop(x)
+                    all_pred_answers_per_type.pop(x)
+
             for tagName in all_gold_answers_per_type.keys():
+
                 this_tagName_golds = all_gold_answers_per_type[tagName]
                 this_tagName_preds = all_pred_answers_per_type[tagName]
                 if partial_evaluate:

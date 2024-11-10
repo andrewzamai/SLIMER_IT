@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # omit path_to_DeG='' to generate without Def & Guidelines
     dataset_KIND_manager = KIND(path_to_BIO,
                                 path_to_templates='../templates',
-                                SLIMER_prompter_name='SLIMER_instruction_it',
+                                SLIMER_prompter_name='SLIMER_PARALLEL_instruction_it',
                                 path_to_DeG='../def_and_guidelines/KIND.json',
                                 test_only=False)
 
@@ -97,6 +97,30 @@ if __name__ == '__main__':
 
     ne_categories = dataset_KIND_manager.get_ne_categories()
     print(ne_categories)
+
+
+    def filter_by_prefix(dataset, subdata_name):
+        def filter_function(example):
+            id_prefix = example["doc_tag_pairID"].split(":")[0]
+            return id_prefix == subdata_name
+
+        return dataset.filter(filter_function)
+
+
+    test_set_parallel = dataset_KIND_manager.convert_dataset_for_SLIMER_PARALLEL(
+        exclude_misc=True,
+        mask_labels=False,
+        max_tagNames_per_prompt=-1,
+        input_chunking_window=900,
+        chunking_overlap=15
+    )['test']
+
+    subdataset = filter_by_prefix(test_set_parallel, "WN")
+
+    print(subdataset)
+    print(sorted(subdataset['doc_tag_pairID'], key=lambda x: int(x.split(":")[-1])))
+
+    quit()
 
     # get N samples per NE, -1 selects all samples available per NE
     dataset_dict_SLIMER = dataset_KIND_manager.get_Npos_Mneg_per_topXtags(N_pos=-1, M_neg=-1)
