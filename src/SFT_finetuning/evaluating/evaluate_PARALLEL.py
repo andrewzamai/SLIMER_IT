@@ -248,11 +248,15 @@ if __name__ == '__main__':
             print("\nMetrics per NE category (100%):\n")
             this_dataset_metrics = {}
 
-            if data['datasets_cluster_name'] == "Multinerd_it":
-                to_discard_NEs = ["BIO", "PER", "ORG", "LOC"]
-                for x in to_discard_NEs:
-                    all_gold_answers_per_type.pop(x)
-                    all_pred_answers_per_type.pop(x)
+            try:
+                if data['datasets_cluster_name'] == "Multinerd_it":
+                    to_discard_NEs = ["entità biologica", "persona", "organizzazione", "luogo"]
+                    for x in to_discard_NEs:
+                        ne = x.upper()
+                        all_gold_answers_per_type.pop(ne)
+                        all_pred_answers_per_type.pop(ne)
+            except:
+                print("NO NEs discarded")
 
             for tagName in all_gold_answers_per_type.keys():
 
