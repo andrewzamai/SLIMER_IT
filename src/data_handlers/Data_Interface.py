@@ -42,7 +42,7 @@ class Data_Interface(ABC):
         self.ne_categories = self.get_ne_categories()  # list of NE tags from BIO labels
         # self.slimer_prompter = SLIMER_Prompter(SLIMER_prompter_name, path_to_templates) if path_to_templates else None
         self.path_to_DeG = path_to_DeG
-        self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER() if self.slimer_prompter else None
+        #self.dataset_dict_SLIMER = self.convert_dataset_for_SLIMER() if self.slimer_prompter else None
 
     @abstractmethod
     def load_datasetdict_BIO(self, path_to_BIO, test_only=False):
