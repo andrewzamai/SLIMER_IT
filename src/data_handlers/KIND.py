@@ -80,13 +80,13 @@ class KIND(Data_Interface):
 
 if __name__ == '__main__':
 
-    path_to_BIO = '../../datasets/KIND/evalita-2023'
+    path_to_BIO = './datasets/KIND/evalita-2023'
 
     # omit path_to_DeG='' to generate without Def & Guidelines
     dataset_KIND_manager = KIND(path_to_BIO,
-                                path_to_templates='../templates',
-                                SLIMER_prompter_name='SLIMER_PARALLEL_instruction_it',
-                                path_to_DeG='../def_and_guidelines/KIND.json',
+                                path_to_templates='./src/templates',
+                                SLIMER_prompter_name='SLIMER_PARALLEL_instruction_it_GRPO',
+                                path_to_DeG='./src/def_and_guidelines/KIND.json',
                                 test_only=False)
 
     # statistics from BIO dataset
@@ -109,27 +109,39 @@ if __name__ == '__main__':
 
     test_set_parallel = dataset_KIND_manager.convert_dataset_for_SLIMER_PARALLEL(
         exclude_misc=True,
-        mask_labels=False,
+        mask_labels=True,
         max_tagNames_per_prompt=-1,
         input_chunking_window=900,
         chunking_overlap=15
-    )['test']
+    )#['train']
 
+    # apply map to each dataset in Dataset dict
+    for split_name, dataset in test_set_parallel.items():
+        dataset = filter_by_prefix(dataset, "WN")
+        test_set_parallel[split_name] = dataset
+    #test_set_parallel = test_set_parallel.map(filter_by_prefix(test_set_parallel, "WN"))
+
+    print(test_set_parallel)
+    test_set_parallel.push_to_hub("KIND_WN_PARALLEL_p1mask", private=False)
+    
     subdataset = filter_by_prefix(test_set_parallel, "WN")
 
     print(subdataset)
     print(sorted(subdataset['doc_tag_pairID'], key=lambda x: int(x.split(":")[-1])))
+
+    
 
     quit()
 
     # get N samples per NE, -1 selects all samples available per NE
     dataset_dict_SLIMER = dataset_KIND_manager.get_Npos_Mneg_per_topXtags(N_pos=-1, M_neg=-1)
     for split_name, dataset in dataset_dict_SLIMER.items():
-        dataset.to_json(f'../../datasets/KIND/SLIMER/{split_name}.json')
+        dataset.to_json(f'./datasets/KIND/SLIMER/{split_name}.json')
 
     split = 'train'
-    kind_SLIMER = load_dataset("json", data_files=f'../../datasets/KIND/SLIMER/{split}.json')['train']
+    kind_SLIMER = load_dataset("json", data_files=f'./datasets/KIND/SLIMER/{split}.json')['train']
     print(kind_SLIMER)
+
 
 
     def process_file(input_file, output_file, entity_mapping):

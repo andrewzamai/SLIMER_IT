@@ -88,14 +88,14 @@ def evaluate_predictions(data, filename): # Added filename argument
 
         # Filter gold answers
         filtered_gold = {
-            tag: entities for tag, entities in gold.items() if tag not in to_discard_NEs
+            tag: entities for tag, entities in gold.items() if tag.lower() not in to_discard_NEs
         }
         for tag, gold_list in filtered_gold.items():
             all_gold_answers_per_type[tag].append(gold_list)
 
         # Filter predicted answers
         filtered_pred = {
-            tag: entities for tag, entities in pred.items() if tag not in to_discard_NEs
+            tag: entities for tag, entities in pred.items() if tag.lower() not in to_discard_NEs
         }
         for tag, pred_list in filtered_pred.items():
             all_pred_answers_per_type[tag].append(pred_list)

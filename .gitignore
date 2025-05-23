@@ -4,3 +4,13 @@
 /venv/
 /exp_outputs/
 /paper/
+/output/
+/eval_LLM
+/grpo_out
+/merged_models
+/trained_models
+/.cache
+.huggingface
+.env
+__pycache__/
+*.pyc

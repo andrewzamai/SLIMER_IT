@@ -148,6 +148,41 @@ class NEREvaluator:
             'FN': n_pos_gold - n_correct,
             'support': n_pos_gold
         }
+    
+    @staticmethod
+    def evaluate_single(pred: list[str], gold: list[str]):
+        gold_tuples = parser(gold)
+        pred_tuples = parser(pred)
+
+        n_correct = sum(1 for t in pred_tuples if t in gold_tuples)
+        n_pos_pred = len(pred_tuples)
+        n_pos_gold = len(gold_tuples)
+
+        if n_pos_pred == 0 and n_pos_gold == 0:
+            return {
+                'precision': 1.0,
+                'recall': 1.0,
+                'f1': 1.0,
+                'TP': 0,
+                'FP': 0,
+                'FN': 0,
+                'support': 0
+            }
+
+        prec = n_correct / (n_pos_pred + 1e-10)
+        recall = n_correct / (n_pos_gold + 1e-10)
+        f1 = 2 * prec * recall / (prec + recall + 1e-10)
+
+        return {
+            'precision': prec,
+            'recall': recall,
+            'f1': f1,
+            'TP': n_correct,
+            'FP': n_pos_pred - n_correct,
+            'FN': n_pos_gold - n_correct,
+            'support': n_pos_gold
+        }
+
 
     @staticmethod
     def partial_evaluate(preds: list, golds: list):

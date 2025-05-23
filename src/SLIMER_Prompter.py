@@ -69,10 +69,12 @@ class SLIMER_PARALLEL_instruction_prompter(object):
                 "{expected_json_format}", expected_json_format
             )
         else:
-            res = self.template["without_DeG"].format(
-                ne_tags=ne_tags
+            res = self.template["without_DeG"].replace(
+                "{ne_tags}", ne_tags).replace(
+                "{expected_json_format}", expected_json_format
             )
         return res
+
 
 
 class ExtremeITLLaMA_Prompter(object):

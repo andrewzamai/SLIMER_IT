@@ -1,0 +1,107 @@
+model_name_or_path: Qwen/Qwen3-8B
+
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: sdpa
+use_peft: true
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+lora_task_type: CAUSAL_LM
+
+######## 
+# Data arguments
+########
+dataset_name: andrewzamai/SLIMER_PARALLEL_pileNER_top391NEs_TrueDef_GRPO_p0mask
+dataset_config: default
+dataset_train_split: train
+dataset_test_split: validation
+system_prompt: "You are a helpful NER assistant. Follow the instruction below to annotate the asked entities from a provided text. Engage in a thorough reasoning process: carefully scrutinize the definitions and guidelines to guide your annotation, discuss ambiguous cases, and resolve class assignments by comparing closely related candidates. Enclose your reasoning between <think> and </think> tags. Finally, return the annotated entities in the requested JSON format, enclosed between ```json and ``` tags. Nothing else should be returned outside these tags."
+
+######## 
+# GRPOConfig(TrainingArguments)
+########
+disable_dropout: true
+remove_unused_columns: false     
+max_prompt_length: 2000          # max txt_report length (up to 2K words) + instruction tokens
+max_completion_length: 3000
+num_generations: 3               # global batch size (num_processes eg 3gpus * per_device_train_batch_size eg 3) must be divisible by this value
+num_iterations: 2                # each prompt can be upsampled to num_generations x num_iterations completions        
+
+mask_truncated_completions: true
+
+temperature: 0.6                 # higher training temperature allows for more completions exploration
+top_p: 0.95
+top_k: 20
+min_p: 0
+
+beta: 0.005                      # beta for KL divergence loss
+epsilon_high: 0.2                # as DAPO paper suggests
+
+#sync_ref_model: true
+#ref_model_sync_steps: 30
+
+#> Parameters that control generation acceleration powered by vLLM
+# vllm_server_host: $NODE_NAME   # set in grpo.py with os.environ['NODE_NAME'], assigned at runtime
+use_vllm: true
+vllm_server_port: 2020
+vllm_server_timeout: 400
+
+scale_rewards: true              # do not scale advantages by std
+log_completions: true             # log completions to wandb 
+num_completions_to_print: 1
+
+loss_type: "dr_grpo"
+
+reward_funcs:
+- format
+- microf1_reward
+reward_weights:
+- 1.0
+- 1.0
+
+#> TrainingArguments
+resume_from_checkpoint: false   # if true and output_dir contains a valid cp it resumes training from it
+
+bf16: true
+bf16_full_eval: true
+do_eval: true
+eval_strategy: steps
+save_strategy: steps
+save_only_model: false
+eval_steps: 150  # 20 
+save_steps: 20   # 10
+
+gradient_accumulation_steps: 64  # 64
+gradient_checkpointing: false
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+learning_rate: 5.0e-5
+log_level: info
+logging_first_step: true
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine
+#warmup_ratio: 0.05
+max_steps: -1
+
+num_train_epochs: 30
+output_dir: ./trained_models/Qwen3-8B-GRPO-SLIMER-PARALLEL-p0mask
+overwrite_output_dir: true
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 1
+push_to_hub: false
+report_to:
+- wandb
+seed: 42
+
+# CustomTrainingConfig:
+# ---- parameters strictly related to the chosen model ----
+pad_token_id: 151643
+#---------------------------------------------------------
+template_path: "./src/SFT_finetuning/templates"
+prediction_prompter: "LLaMA3-chat-NOheaders"
