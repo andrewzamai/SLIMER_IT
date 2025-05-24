@@ -436,7 +436,8 @@ class Data_Interface(ABC):
                                 json_output[tag_upper] = [x[0] for x in sample_gold_spans_per_ne[l]]
 
                             # Shuffle tag names
-                            random.shuffle(tagNames_list)
+                            #TODO: shuffle only for train!
+                            #random.shuffle(tagNames_list)
 
                             if mask_labels:
                                 tag_to_LABEL_dict = {}
